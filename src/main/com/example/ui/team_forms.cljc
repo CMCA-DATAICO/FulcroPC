@@ -5,8 +5,10 @@
        :cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]])
     [clojure.string :as str]
     [com.example.model-rad.team :as r.team]
+    [com.example.model-rad.city :as r.city]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
+    [com.wsscode.pathom.connect :as pc :refer [defmutation]]
     [com.fulcrologic.rad.control :as control]
     [com.fulcrologic.rad.form :as form]
     [com.fulcrologic.rad.form-options :as fo]
@@ -19,28 +21,39 @@
     (remote [env]
             (assoc env :remote `com.example.server.mutations/set-team-active)))
 
+#?(:cljs
+   (m/defmutation toggle-enable [{:keys [team/id] :as params}]
+     (action [{:keys [app state] :as env}]
+             (swap! state update-in [:team/id id :team/enable?] not))
+     (remote [env] true)
+     (ok-action [{:keys [app state result]}]
+                (println "It WORK!"))))
 
-(form/defsc-form TeamForm [this props]
-  {fo/id             r.team/id
-   fo/attributes     [r.team/title
-                      r.team/city]
-   fo/route-prefix   "team"
-   fo/title          "Create Teams"
-   fo/field-styles   {:team/city :pick-one}
-   fo/controls {:team/city
-                    (fn [this value _ {:keys [onChange cities]}]
-                      (dom/select
-                        {:value    (str value)
-                         :onChange #(onChange (js/parseInt (.. % -target -value)))}
-                        (dom/option {:value ""} "-- Select a City --")
-                        (map (fn [{:keys [id title]}]
-                               (dom/option {:key id :value id} title))
-                             cities)))}
+
+#?(:clj
+   (pc/defmutation toggle-enable [env {id :team/id :as params}]
+                   {::pc/params #{:team/id}}
+                   (db/toggle-enable id)
+                   nil))
+
+
+(form/defsc-form TeamForm [this {:keys [cities] :as props}]
+  {fo/id           r.team/id
+   fo/attributes   [r.team/title
+                    r.team/city]
+   fo/route-prefix "team"
+   fo/title        "Create Teams"
+   fo/field-styles {:team/city :pick-one}
+   #_fo/controls     #_{:team/city
+                        (fn [this value _ {:keys [onChange]}]
+                          (dom/select
+                            {:value    (str value)
+                             :onChange #(onChange (.. % -target -value))}
+                            (dom/option {:value ""} "-- Select a City --")
+                            (map (fn [{:keys [id title]}]
+                                   (dom/option {:key id :value (str id)} title))
+                                 cities)))}
    })
-
-#_:query #_[:team/id :team/title :team/score :team/city :team/enable?
-            {:city/all-cities [:id :title]}]
-
 
 
 ;; NOTE: any form can be used as a subform, but when you do so you must add addl config here
@@ -77,7 +90,7 @@
    ro/row-pk              r.team/id
    ro/columns             [r.team/title r.team/city r.team/score r.team/enable?]
    ro/column-formatters   {:team/city (fn [_ v _ _] (str (:city/title v)))}
-   ro/form-links {r.team/title TeamForm}
+   ro/form-links          {r.team/title TeamForm}
 
    ;; NOTE: You can uncomment these 3 lines to see how to switch over to using handwritten row rendering, with a list style
    ;::report/layout-style             :list
@@ -122,14 +135,14 @@
    ro/control-layout      {:action-buttons [::new-team ::new-city]
                            :inputs         [[::filter-title ::search! :_]]}
 
-   ro/row-actions         [{:label "Primera"
-                            :action (fn [report-instance {:team/keys [id]}]
-                                          #?(:cljs
-                                             (comp/transact! report-instance
-                                                             [(com.example.ui.team-forms/toggle-team-active {:team/id id})])))
+   ro/row-actions         [{:label  "Can Play?"
+                            :action (fn [this {:team/keys [id]}]
+                                      #?(:cljs
+                                         (comp/transact! this
+                                                         [(toggle-enable {:team/id id})])))
                             }
-                           {:label  "Segunda"
-                            ;:action (print "Helado")
+                           #_{
+                            :action (print "Helado")
                             #_(fn [report-instance {:team/keys [id]}]
                                 #_#?(:cljs
                                      (comp/transact! report-instance [(team/set-team-active {:team/id id})])))
@@ -138,6 +151,8 @@
                             }]
 
    ro/route               "teams"})
+
+
 
 #_(div
     ;(report/render-controls this)

@@ -25,17 +25,19 @@
      [env _]
      (log/debug (some-> (get-in env [do/databases :production]) deref))
      (if-let [db (some-> (get-in env [do/databases :production]) deref)]
-       (let [ids (map first (d/q '[:find ?id ?title
-                                   :where
-                                   [?e :city/id ?id]
-                                   [?e :city/title ?title]]
-                                 db))]
-         (mapv (fn [id] {:city/id id}) ids))
+       (let [cities (d/q '[:find ?id ?title
+                           :where
+                           [?e :city/id ?id]
+                           [?e :city/title ?title]]
+                         db)]
+         ;; Mapping cities to include both :city/id and :city/title
+         (mapv (fn [[id title]] {:city/id id :city/title title}) cities))
        (log/error "No database atom for production schema!"))))
+
 
 #?(:clj
    (defresolver all-cities-resolver [env params]
-     {::pc/output [{:city/all-cities [:city/id :city/title]}]}
+     {::pc/output [:city/all-cities]}
      {:city/all-cities (get-all-cities env params)}))
 
 (def resolvers [all-cities-resolver])

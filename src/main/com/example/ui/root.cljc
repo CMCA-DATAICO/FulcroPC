@@ -23,7 +23,7 @@
    :ident         (fn [] [:component/id ::LandingPage])
    :initial-state {}
    :route-segment ["landing-page"]}
-  (dom/div "Changing it"))
+  (dom/div "FUTBOL PROFESIONAL COLOMBIANO"))
 
 ;; This will just be a normal router...but there can be many of them.
 (defrouter MainRouter [this {:keys [current-state route-factory route-props]}]
@@ -37,6 +37,8 @@
       (route-factory route-props))))
 
 (def ui-main-router (comp/factory MainRouter))
+
+;(def ui-team-form (fp/factory TeamForm))
 
 (defsc Root [this {::app/keys [active-remotes]
                    :ui/keys   [ready? router]}]
@@ -52,14 +54,15 @@
            (div :.ui.top.menu
                 (comp/fragment
                   (dom/div :.ui.item {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
-                  #_(ui-dropdown {:className "item" :text "Account"}
+                  (ui-dropdown {:className "item" :text "Tournament"}
                                (ui-dropdown-menu {}
-                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this AccountList {}))} "All Accounts")
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this AccountForm))} "New Account")))
+                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamList))} "New Tournament")
+                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamList))} "History")))
                   (ui-dropdown {:className "item" :text "Team"}
                                (ui-dropdown-menu {}
                                                  (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "All Teams")
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm))} "New Team")
+                                                 ;(ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm {:cities (get-in props [:city/all-cities])}))} "New Team")
+                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm {}))} "New Team")
                                                  ))
                   (ui-dropdown {:className "item" :text "City"}
                                (ui-dropdown-menu {}

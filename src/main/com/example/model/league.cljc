@@ -1,4 +1,4 @@
-(ns com.example.model.team
+(ns com.example.model.league
   "Functions, resolvers, and mutations supporting `account`.
 
    DO NOT require a RAD model file in this ns. This ns is meant to be an ultimate
@@ -18,15 +18,14 @@
 ;; [your-app.db :as db]
 
 
-(defn new-team
-  [id title city score enable? & {:as addl}]
+(defn new-league
+  [id year teams matches & {:as addl}]
   (merge
-    {:db/id        title
-     :team/id      id
-     :team/title   title
-     :team/city    city
-     :team/score   score
-     :team/enable? enable?}
+    {:db/id        year
+     :league/id      id
+     :league/year year
+     :league/teams teams
+     :league/matches matches}
     addl))
 
 #?(:clj

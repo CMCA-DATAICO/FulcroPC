@@ -1,4 +1,4 @@
-(ns com.example.model-rad.team
+(ns com.example.model-rad.league
   "RAD definition of an `account`. Attributes only. These will be used all over the app, so try to limit
    requires to model code and library code."
   (:require
@@ -7,21 +7,20 @@
     [com.fulcrologic.rad.attributes-options :as ao]
     [com.fulcrologic.rad.report-options :as ro]))
 
-(defattr id :team/id :uuid
+(defattr id :league/id :uuid
   {ao/identity? true
    ao/schema    :production})
 
-(defattr title :team/title :string
+(defattr year :league/year :long
   {ao/identities #{:team/id}
    ao/required?  true
    ao/schema     :production})
 
-(defattr score :team/score :long
+(defattr league :league :long
   {ao/identities    #{:team/id}
-   fo/default-value (int (+ 50 (rand-int 100)))
    ao/schema        :production})
 
-(defattr city :team/city :ref
+(defattr teams :league/teams :ref
   {ao/target     :city/id
    ao/identities #{:team/id}
    ao/schema     :production
