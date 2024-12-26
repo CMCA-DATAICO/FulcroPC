@@ -12,6 +12,7 @@
     [com.example.model.account :as m.account]
     [com.example.model.team :as m.team]
     [com.example.model.city :as m.city]
+    [com.example.model.match :as m.match]
 
     [com.fulcrologic.rad.attributes :as attr]
     [com.fulcrologic.rad.blob :as blob]
@@ -33,7 +34,7 @@
 
 (def all-resolvers
   "The list of all hand-written resolvers/mutations."
-  [index-explorer m.account/resolvers m.team/resolvers m.city/resolvers])
+  [index-explorer m.account/resolvers m.team/resolvers m.city/resolvers m.match/resolvers])
 
 (defstate parser
   :start
