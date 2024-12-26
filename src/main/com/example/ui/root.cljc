@@ -9,26 +9,26 @@
     [com.example.ui.account-forms :refer [AccountForm AccountList]]
     [com.example.ui.team-forms :refer [TeamForm TeamList]]
     [com.example.ui.city-forms :refer [CityForm CityList]]
+    [com.example.ui.match-forms :refer [MatchForm MatchList]]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
     [com.fulcrologic.fulcro.routing.dynamic-routing :refer [defrouter]]
     [com.fulcrologic.rad.form :as form]
     [com.fulcrologic.rad.ids :refer [new-uuid]]
-    [com.fulcrologic.rad.routing :as rroute]
-    [taoensso.timbre :as log]))
+    [com.fulcrologic.rad.routing :as rroute]))
 
 (defsc LandingPage [this props]
   {:query         ['*]
    :ident         (fn [] [:component/id ::LandingPage])
    :initial-state {}
    :route-segment ["landing-page"]}
-  (dom/div "FUTBOL PROFESIONAL COLOMBIANO"))
+  (dom/div "FUTBOL PROFESIONAL COLOMBIANO - PROBANDO"))
 
 ;; This will just be a normal router...but there can be many of them.
 (defrouter MainRouter [this {:keys [current-state route-factory route-props]}]
   {:always-render-body? true
-   :router-targets      [LandingPage AccountList AccountForm TeamList TeamForm CityList CityForm]}
+   :router-targets      [LandingPage AccountList AccountForm TeamList TeamForm CityList CityForm MatchList MatchForm]}
   ;; Normal Fulcro code to show a loader on slow route change (assuming Semantic UI here, should
   ;; be generalized for RAD so UI-specific code isn't necessary)
   (dom/div
@@ -37,8 +37,6 @@
       (route-factory route-props))))
 
 (def ui-main-router (comp/factory MainRouter))
-
-;(def ui-team-form (fp/factory TeamForm))
 
 (defsc Root [this {::app/keys [active-remotes]
                    :ui/keys   [ready? router]}]
@@ -56,8 +54,10 @@
                   (dom/div :.ui.item {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
                   (ui-dropdown {:className "item" :text "Tournament"}
                                (ui-dropdown-menu {}
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamList))} "New Tournament")
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamList))} "History")))
+                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "Tournament")
+                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this MatchList {}))} "All Matches")
+                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this MatchForm {}))} "New Match")
+                                                 ))
                   (ui-dropdown {:className "item" :text "Team"}
                                (ui-dropdown-menu {}
                                                  (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "All Teams")

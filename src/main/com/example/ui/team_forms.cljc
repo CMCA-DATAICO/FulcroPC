@@ -14,6 +14,8 @@
     [com.fulcrologic.rad.form-options :as fo]
     [com.fulcrologic.rad.report :as report]
     [com.fulcrologic.rad.report-options :as ro]
+    [com.fulcrologic.rad.picker-options :as po]
+    [com.fulcrologic.fulcro.raw.components :as rc]
     [taoensso.timbre :as log]))
 
 #_(m/defmutation toggle-team-active
@@ -44,16 +46,14 @@
    fo/route-prefix "team"
    fo/title        "Create Teams"
    fo/field-styles {:team/city :pick-one}
-   #_fo/controls     #_{:team/city
-                        (fn [this value _ {:keys [onChange]}]
-                          (dom/select
-                            {:value    (str value)
-                             :onChange #(onChange (.. % -target -value))}
-                            (dom/option {:value ""} "-- Select a City --")
-                            (map (fn [{:keys [id title]}]
-                                   (dom/option {:key id :value (str id)} title))
-                                 cities)))}
-   })
+   fo/field-options {:team/city   {po/query-key       :city/all-cities
+                                     po/query-component (rc/nc [:city/title :city/id])
+                                     po/options-xform   (fn [normalize-response raw-response]
+                                                          (mapv
+                                                            (fn [{:city/keys [id title]}]
+                                                              {:text title :value [:city/id id]})
+                                                            (sort-by :city/title raw-response)
+                                                            ))}}})
 
 
 ;; NOTE: any form can be used as a subform, but when you do so you must add addl config here

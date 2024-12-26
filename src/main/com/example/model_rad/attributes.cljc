@@ -9,6 +9,7 @@
     [com.example.model-rad.file :as m.file]
     [com.example.model-rad.team :as team]
     [com.example.model-rad.city :as m.city]
+    [com.example.model-rad.match :as match]
     [com.fulcrologic.rad.attributes :as attr]))
 
 (def all-attributes (into []
@@ -17,6 +18,7 @@
                         m.file/attributes
                         team/attributes
                         m.city/attributes
+                        match/attributes
                         )))
 
 (def key->attribute (attr/attribute-map all-attributes))
