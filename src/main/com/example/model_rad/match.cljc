@@ -11,47 +11,52 @@
   {ao/identity? true
    ao/schema    :production})
 
-(defattr league :match/league :long
-  {ao/identities #{:match/id}
-   ao/required?  true
-   ao/schema     :production})
+(defattr league :match/league :ref
+  {ao/target      :league/id
+   ao/identities  #{:match/id}
+   ao/cardinality :one
+   ro/column-EQL  {:match/league [:league/id :league/year]}
+   ao/schema      :production})
 
 (defattr date :match/date :instant
-  {ao/identities #{:match/id}
-   ao/required?  true
-   ao/schema     :production})
+  {ao/identities  #{:match/id}
+   ao/cardinality :one
+   ao/schema      :production})
 
 (defattr match-day :match/match-day :long
-  {ao/identities #{:match/id}
-   ao/required?  true
-   ao/schema     :production})
+  {ao/identities  #{:match/id}
+   ao/required?   true
+   ao/cardinality :one
+   ao/schema      :production})
 
 (defattr local :match/local :ref
-  {ao/target     :team/id
-   ao/identities #{:match/id}
-   ;ao/required?  true
-   ao/schema     :production
-   ro/column-EQL {:match/local [:team/id :team/title :team/score :team/enable?]}
+  {ao/target      :team/id
+   ao/identities  #{:match/id}
+   ao/cardinality :one
+   ao/required?   true
+   ao/schema      :production
+   ro/column-EQL  {:match/local [:team/id :team/title :team/score :team/enable?]}
    })
 
 (defattr visitor :match/visitor :ref
-  {ao/target     :team/id
-   ao/identities #{:match/id}
-   ;ao/required?  true
-   ao/schema     :production
-   ro/column-EQL {:match/visitor [:team/id :team/title :team/score :team/enable?]}
+  {ao/target      :team/id
+   ao/identities  #{:match/id}
+   ao/cardinality :one
+   ao/required?   true
+   ao/schema      :production
+   ro/column-EQL  {:match/visitor [:team/id :team/title :team/score :team/enable?]}
    })
 
 (defattr local-goals :match/local-goals :long
-  {ao/identities #{:match/id}
-   ao/required?  true
-   ao/schema     :production
+  {ao/identities  #{:match/id}
+   ao/cardinality :one
+   ao/schema      :production
    })
 
 (defattr visitor-goals :match/visitor-goals :long
-  {ao/identities #{:match/id}
-   ao/required?  true
-   ao/schema     :production
+  {ao/identities  #{:match/id}
+   ao/cardinality :one
+   ao/schema      :production
    })
 
 (def attributes [id date league match-day local visitor local-goals visitor-goals])

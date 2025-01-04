@@ -12,13 +12,33 @@
    ao/schema    :production})
 
 (defattr title :team/title :string
-  {ao/identities #{:team/id}
-   ao/required?  true
-   ao/schema     :production})
+  {ao/identities  #{:team/id}
+   ao/required?   true
+   ao/cardinality :one
+   ao/schema      :production})
 
 (defattr score :team/score :long
   {ao/identities    #{:team/id}
+   ao/cardinality   :one
    fo/default-value (int (+ 50 (rand-int 100)))
+   ao/schema        :production})
+
+(defattr attack :team/attack :long
+  {ao/identities    #{:team/id}
+   ao/cardinality   :one
+   fo/default-value (rand-int 100)
+   ao/schema        :production})
+
+(defattr mid :team/mid :long
+  {ao/identities    #{:team/id}
+   ao/cardinality   :one
+   fo/default-value (rand-int 100)
+   ao/schema        :production})
+
+(defattr defence :team/defence :long
+  {ao/identities    #{:team/id}
+   ao/cardinality   :one
+   fo/default-value (rand-int 100)
    ao/schema        :production})
 
 (defattr city :team/city :ref
@@ -33,4 +53,12 @@
    fo/default-value true
    ao/schema        :production})
 
-(def attributes [id title score city enable?])
+(defattr palmares :team/palmares :ref
+  {ao/target      :league/id
+   ao/identities  #{:team/id}
+   ao/schema      :production
+   ao/cardinality :many
+   ro/column-EQL  {:team/palmares [:league/id :league/year :league/champion :league/completed?]}
+   })
+
+(def attributes [id title score attack mid defence city enable? palmares])

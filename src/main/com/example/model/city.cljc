@@ -41,7 +41,3 @@
      {:city/all-cities (get-all-cities env params)}))
 
 (def resolvers [all-cities-resolver])
-
-
-
-(ns com.example.model.city)

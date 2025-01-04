@@ -76,10 +76,10 @@
                   (if edit-form
                     (dom/a :.header {:onClick (fn [] (form/edit! this edit-form entity-id))} title)
                     (dom/div :.header title)))))
+
   #_(dom/tr
       (dom/td :.right.aligned title)
       (dom/td (str active?)))
-
   )
 
 (def ui-team-list-item (comp/factory TeamListItem))
@@ -88,7 +88,7 @@
   {ro/title               "All Teams"
    ro/source-attribute    :team/all-teams
    ro/row-pk              r.team/id
-   ro/columns             [r.team/title r.team/city r.team/score r.team/enable?]
+   ro/columns             [r.team/title r.team/city r.team/score r.team/enable? r.team/palmares]
    ro/column-formatters   {:team/city (fn [_ v _ _] (str (:city/title v)))}
    ro/form-links          {r.team/title TeamForm}
 
@@ -132,7 +132,7 @@
                                                 :onChange      (fn [this _] (control/run! this))
                                                 :label         "Show Inactive teams?"}}
 
-   ro/control-layout      {:action-buttons [::new-team ::new-city]
+   ro/control-layout      {:action-buttons [::new-team]
                            :inputs         [[::filter-title ::search! :_]]}
 
    ro/row-actions         [{:label  "Can Play?"
@@ -151,8 +151,6 @@
                             }]
 
    ro/route               "teams"})
-
-
 
 #_(div
     ;(report/render-controls this)

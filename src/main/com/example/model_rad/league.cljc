@@ -12,24 +12,45 @@
    ao/schema    :production})
 
 (defattr year :league/year :long
-  {ao/identities #{:team/id}
-   ao/required?  true
-   ao/schema     :production})
+  {ao/identities  #{:league/id}
+   ao/required?   true
+   ao/cardinality :one
+   ao/schema      :production})
 
-(defattr league :league :long
-  {ao/identities    #{:team/id}
-   ao/schema        :production})
+(defattr matches :league :ref
+  {ao/target      :team/id
+   ao/identities  #{:league/id}
+   ao/cardinality :many
+   ao/schema      :production
+   ro/column-EQL  {:league/matches [:match/id :match/match-day :match/date
+                                    :match/local :match/local-goals
+                                    :match/visitor :match/visitor-goals]}})
 
 (defattr teams :league/teams :ref
-  {ao/target     :city/id
-   ao/identities #{:team/id}
-   ao/schema     :production
-   ro/column-EQL {:team/city [:city/id :city/title]}
-   })
+  {ao/target      :team/id
+   ao/cardinality :many
+   ao/identities  #{:league/id}
+   ao/schema      :production
+   ro/column-EQL  {:league/teams [:team/id :team/title
+                                  :team/city [:city/id :city/title]]}})
 
-(defattr enable? :team/enable? :boolean
-  {ao/identities    #{:team/id}
-   fo/default-value true
-   ao/schema        :production})
+(defattr ladder :league/ladder :ref
+  {ao/target :team/id
+   ao/cardinality :many
+   ao/identities #{:league/id}
+   ao/schema :production
+   ro/column-EQL {:league/ladder [:team/title]}})
 
-(def attributes [id title score city enable?])
+(defattr completed? :league/completed? :boolean
+  {ao/identities  #{:league/id}
+   ao/required?   true
+   ao/cardinality :one
+   ao/schema      :production})
+
+(defattr champion :league/champion :ref
+  {ao/target      :team/id
+   ao/cardinality :one
+   ao/identities  #{:league/id}
+   ao/schema      :production})
+
+(def attributes [id year matches teams ladder completed? champion])

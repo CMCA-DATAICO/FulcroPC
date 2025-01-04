@@ -1,34 +1,75 @@
 (ns com.example.ui.root
   "App UI root. Standard Fulcro."
   (:require
+    #?(:clj [com.example.model-rad.team :as team])
+    #?(:clj [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]])
+    #?(:cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]])
     #?@(:cljs [[com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown :refer [ui-dropdown]]
                [com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown-menu :refer [ui-dropdown-menu]]
                [com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown-item :refer [ui-dropdown-item]]])
-    #?(:clj  [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]]
-       :cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]])
+
     [com.example.ui.account-forms :refer [AccountForm AccountList]]
     [com.example.ui.team-forms :refer [TeamForm TeamList]]
     [com.example.ui.city-forms :refer [CityForm CityList]]
     [com.example.ui.match-forms :refer [MatchForm MatchList]]
+    [com.example.ui.league-forms :refer [LeagueList]]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
     [com.fulcrologic.fulcro.routing.dynamic-routing :refer [defrouter]]
     [com.fulcrologic.rad.form :as form]
     [com.fulcrologic.rad.ids :refer [new-uuid]]
-    [com.fulcrologic.rad.routing :as rroute]))
+    [com.fulcrologic.rad.routing :as rroute]
+    [com.fulcrologic.fulcro.data-fetch :as df]
+    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]))
 
-(defsc LandingPage [this props]
-  {:query         ['*]
+(defn load-data [app key target]
+  (df/load! app key nil {:target               (conj target key)
+                         :post-mutation        `dr/target-ready
+                         :post-mutation-params {:target target}}))
+
+(defsc LandingPage [this {:keys [league/all-leagues team/attributes-teams]}]
+  {:query         [{:league/all-leagues [:league/id :league/year]}
+                   {:team/attributes-teams [:team/id :team/title :team/city]}]
    :ident         (fn [] [:component/id ::LandingPage])
    :initial-state {}
-   :route-segment ["landing-page"]}
-  (dom/div "FUTBOL PROFESIONAL COLOMBIANO - PROBANDO"))
+   :route-segment ["landing-page"]
+   :will-enter    (fn [app _]
+                    (dr/route-deferred
+                      [:component/id ::LandingPage]
+                      (fn []
+                        (load-data app :league/all-leagues [:component/id ::LandingPage ])
+                        (load-data app :team/attributes-teams [:component/id ::LandingPage ]))))}
+  (dom/div
+    (dom/h3 "Landing Page")
+    (dom/div
+      (if all-leagues
+        (dom/ul
+          (map (fn [{:league/keys [id year]}]
+                 (dom/li (str "League " id ": " year)))
+               all-leagues))
+        "Loading leagues..."))
+    (dom/div :.ui.grid {:style {:display "flex" :flex-wrap "wrap"}}
+             (if attributes-teams
+               (let [chunks (partition 4 attributes-teams)]  ;; Partition the data into groups of 4
+                 (map (fn [row]
+                        (dom/div :.row {:style {:width "100%"}}
+                                 (map (fn [{:team/keys [id title city]}]
+                                        (dom/div :.four.wide.column {:style {:border "1px solid black" :text-align "center" :flex "0 0 25%"}}
+                                                 (str title " | City: " (:city/title city))))
+                                      row)))
+                      chunks))))
+    ))
 
 ;; This will just be a normal router...but there can be many of them.
 (defrouter MainRouter [this {:keys [current-state route-factory route-props]}]
   {:always-render-body? true
-   :router-targets      [LandingPage AccountList AccountForm TeamList TeamForm CityList CityForm MatchList MatchForm]}
+   :router-targets      [LandingPage
+                         AccountList AccountForm
+                         TeamList TeamForm
+                         CityList CityForm
+                         MatchList MatchForm
+                         LeagueList]}
   ;; Normal Fulcro code to show a loader on slow route change (assuming Semantic UI here, should
   ;; be generalized for RAD so UI-specific code isn't necessary)
   (dom/div
@@ -54,14 +95,13 @@
                   (dom/div :.ui.item {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
                   (ui-dropdown {:className "item" :text "Tournament"}
                                (ui-dropdown-menu {}
-                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "Tournament")
+                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this LeagueList {}))} "Tournament")
                                                  (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this MatchList {}))} "All Matches")
                                                  (ui-dropdown-item {:onClick (fn [] (form/create! this MatchForm {}))} "New Match")
                                                  ))
                   (ui-dropdown {:className "item" :text "Team"}
                                (ui-dropdown-menu {}
                                                  (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "All Teams")
-                                                 ;(ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm {:cities (get-in props [:city/all-cities])}))} "New Team")
                                                  (ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm {}))} "New Team")
                                                  ))
                   (ui-dropdown {:className "item" :text "City"}

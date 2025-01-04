@@ -10,6 +10,7 @@
     [com.example.model-rad.team :as team]
     [com.example.model-rad.city :as m.city]
     [com.example.model-rad.match :as match]
+    [com.example.model-rad.league :as league]
     [com.fulcrologic.rad.attributes :as attr]))
 
 (def all-attributes (into []
@@ -19,6 +20,7 @@
                         team/attributes
                         m.city/attributes
                         match/attributes
+                        league/attributes
                         )))
 
 (def key->attribute (attr/attribute-map all-attributes))

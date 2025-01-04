@@ -11,22 +11,22 @@
     [datomic.client.api :as d]
     [taoensso.timbre :as log]
     [com.fulcrologic.fulcro.mutations :as m]
-    [com.wsscode.pathom.connect :as pc :refer [defmutation]]
     [com.fulcrologic.fulcro.components :as comp]
     ))
 
-;; [your-app.db :as db]
-
-
 (defn new-team
-  [id title city score enable? & {:as addl}]
+  [id title city score attack mid defence enable? palmares & {:as addl}]
   (merge
-    {:db/id        title
-     :team/id      id
-     :team/title   title
-     :team/city    city
-     :team/score   score
-     :team/enable? enable?}
+    {:db/id         title
+     :team/id       id
+     :team/title    title
+     :team/city     city
+     :team/score    score
+     :team/attack   attack
+     :team/mid      mid
+     :team/defence  defence
+     :team/enable?  enable?
+     :team/palmares palmares}
     addl))
 
 #?(:clj
@@ -46,13 +46,20 @@
                 {::pc/output [{:team/all-teams [:team/id]}]}
                 {:team/all-teams (get-all-teams env params)}))
 
+#?(:clj
+   (defn get-attributes-teams
+     [env query-params]
+     (log/debug (some-> (get-in env [do/databases :production]) deref))
+     (if-let [db (some-> (get-in env [do/databases :production]) deref)]
+       (let [ids (d/q '[:find (pull ?e [:team/id :team/title :team/score {:team/city [*]} :team/enable? :team/palmares])
+                        :where [?e :team/id _]] db)]
+         (mapv first ids))
+       (log/error "No database atom for production schema!"))))
 
-
-
-#_#?(:clj
-     (defresolver all-teams-attributes-resolver [env params]
-                  {::pc/output [{:team/all-teams [:team/id]}]}
-                  {:team/all-teams (get-all-teams env params)}))
+#?(:clj
+   (defresolver attributes-teams-resolver [env params]
+                {::pc/output [{:team/attributes-teams [:team/id]}]}
+                {:team/attributes-teams (get-attributes-teams env params)}))
 
 #_#?(:clj
      (defmutation set-team-active [{:keys [team/id]}]
@@ -66,4 +73,4 @@
                              :team/id      id
                              :team/enable? new-value}))))
 
-(def resolvers [all-teams-resolver])
+(def resolvers [all-teams-resolver attributes-teams-resolver])
