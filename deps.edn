@@ -1,12 +1,13 @@
 {:paths   ["src/main" "resources"]
 
- :deps    {org.clojure/clojure                 {:mvn/version "1.11.3"}
-           bidi/bidi                           {:mvn/version "2.1.6"}
-           com.taoensso/timbre                 {:mvn/version "5.1.2"}
-           com.wsscode/pathom                  {:mvn/version "2.4.0"}
-           com.fulcrologic/fulcro              {:mvn/version "3.7.5"}
-           com.fulcrologic/fulcro-garden-css   {:mvn/version "3.0.9"}
-           com.fulcrologic/semantic-ui-wrapper {:mvn/version "2.1.4"}
+ :deps    {org.clojure/clojure                    {:mvn/version "1.11.3"}
+           bidi/bidi                              {:mvn/version "2.1.6"}
+           com.taoensso/timbre                    {:mvn/version "6.6.1"}
+           com.taoensso/encore                    {:mvn/version "3.133.0"}
+           com.wsscode/pathom                     {:mvn/version "2.4.0"}
+           com.fulcrologic/fulcro                 {:mvn/version "3.7.5"}
+           com.fulcrologic/fulcro-garden-css      {:mvn/version "3.0.9"}
+           com.fulcrologic/semantic-ui-wrapper    {:mvn/version "2.1.4"}
 
            com.fulcrologic/fulcro-rad             {:mvn/version "1.3.2"}
            com.fulcrologic/fulcro-rad-semantic-ui {:mvn/version "1.2.15"}
@@ -16,6 +17,7 @@
            cljc.java-time/cljc.java-time          {:mvn/version "0.1.18"}
            edn-query-language/eql                 {:mvn/version "1.0.2"}
            com.fulcrologic/guardrails             {:mvn/version "1.1.11"}
+           org.clojure/math.combinatorics         {:mvn/version "0.1.6"}
 
            ;; Server
            mount/mount                            {:mvn/version "0.1.12"}
@@ -37,10 +39,10 @@
  :aliases {:test      {:extra-paths ["src/test"]
                        :extra-deps  {fulcrologic/fulcro-spec {:mvn/version "3.1.12"}}}
 
-           :cljs      {:extra-deps {org.clojure/clojurescript                       {:mvn/version "1.11.132"}
-                                    thheller/shadow-cljs                            {:mvn/version "2.20.16"}
-                                    com.fulcrologic/semantic-ui-wrapper             {:mvn/version "2.0.1"}
-                                    binaryage/devtools                              {:mvn/version "1.0.4"}}}
+           :cljs      {:extra-deps {org.clojure/clojurescript           {:mvn/version "1.11.132"}
+                                    thheller/shadow-cljs                {:mvn/version "2.20.16"}
+                                    com.fulcrologic/semantic-ui-wrapper {:mvn/version "2.0.1"}
+                                    binaryage/devtools                  {:mvn/version "1.0.4"}}}
 
            :run-tests {:main-opts  ["-m" "kaocha.runner"]
                        :extra-deps {lambdaisland/kaocha {:mvn/version "1.71.1119"}}}

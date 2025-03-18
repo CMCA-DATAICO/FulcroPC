@@ -1,12 +1,14 @@
 (ns development
   (:require
     [clojure.tools.namespace.repl :as tools-ns :refer [set-refresh-dirs]]
+    [clojure.math.combinatorics :as combo]
     [com.example.components.database :refer [datomic-connections]]
     [com.example.components.ring-middleware]
     [com.example.components.server]
     [com.fulcrologic.rad.ids :refer [new-uuid]]
     [com.fulcrologic.rad.type-support.date-time :as dt]
     [com.example.model.team :as team]
+    [com.example.model.match :as match]
     [datomic.client.api :as d]
     [mount.core :as mount]
     [taoensso.timbre :as log])
@@ -20,6 +22,7 @@
     (d/pull db '[*] [:team/id (new-uuid 100)])))
 
 (def city-initial-arr
+  "This vector contains a pre-seed for cities"
   [{:db/id "Medellin" :city/id (new-uuid) :city/title "Medellin"}
    {:db/id "Bogota" :city/id (new-uuid) :city/title "Bogota"}
    {:db/id "Cali" :city/id (new-uuid) :city/title "Cali"}
@@ -35,6 +38,7 @@
    {:db/id "Envigado" :city/id (new-uuid) :city/title "Envigado"}])
 
 (def team-initial-arr
+  "This vector contains a pre-seed for teams"
   [{:team/id (new-uuid) :team/title "Atletico Nacional" :team/city "Medellin" :team/score (rand-int 100)}
    {:team/id (new-uuid) :team/title "Independiente Medellin" :team/city "Medellin" :team/score (rand-int 100)}
    {:team/id (new-uuid) :team/title "Millonarios" :team/city "Bogota" :team/score (rand-int 100)}
@@ -53,29 +57,19 @@
    {:team/id (new-uuid) :team/title "Huila" :team/city "Neiva" :team/score (rand-int 100)}])
 
 (def league-initial-arr
+  "Pre-seed league - Now it's working"
   [{:db/id             "2024"
     :league/id         (new-uuid)
     :league/year       2024
+    :league/teams      team-initial-arr
     :league/champion   (rand-nth team-initial-arr)
     :league/completed? false}])
 
-(defn create-match [local visitor]
-  (let [local-name (:team/title local)
-        visitor-name (:team/title visitor)]
-    (str local-name " vs " visitor-name)))
-
-#_(doseq [{:keys [team/id team/title]} team-initial-arr]
-    (println title))
-
-#_(defn random-date-in-year [year]
-    (let [start-of-year (LocalDate/of year 1 1)
-          days-in-year (.lengthOfYear start-of-year)
-          random-day (rand-int days-in-year)]
-      (.toInstant (.plusDays start-of-year random-day))))
-
-(defn generate-match
+(defn new-match
+  "Pre-seed match - It is a test"
   [local-team visitor-team match-day]
   {:match/id            (new-uuid)
+   :match/date          #inst "2024-01-01T11:30"
    :match/league        "2024"
    :match/match-day     match-day
    :match/local         local-team
@@ -83,25 +77,28 @@
    :match/local-goals   (rand-int 5)
    :match/visitor-goals (rand-int 5)})
 
-#_((def nacional (rand-nth team-initial-arr))
-   (def dim (rand-nth team-initial-arr))
-   (str team-initial-arr)
 
-   (def arr-match (vector (generate-match nacional dim (rand-int 19))))
-   arr-match
+"Old algorithm for match making using permuted-combinations"
+(defn- matches-for-team*
+  "This is the helper function for matches-for-team and works in the iterations for every team."
+  [local visitors match-day matches]
+  (if (seq visitors)
+    (let [current-match (new-match local (first visitors) match-day)]
+      (matches-for-team* local (rest visitors) (inc match-day) (conj matches current-match)))
+    matches))
 
-   (create-match nacional dim)
+(defn matches-for-team
+  "Returns a sequence of matches for a given team who will play against the provided visiting-teams."
+  ([local-team visiting-teams]
+   (matches-for-team* local-team visiting-teams 1 [])))
 
-   (select-keys nacional [:team/id])
+(defn all-matches
+  "Returns a sequence of home away in permuted combination matches among the given teams."
+  [teams]
+  (for [[home away] (combo/combinations teams 2)]
+    (new-match home away (+ 1 (rand-int 15)))))
 
-   (let [{:keys [team/title team/id]} nacional]
-     (str "Title: " title " ID:" id)))
-
-#_(def matches
-    (mapv
-      (fn [idx [local visitor]]
-        (generate-match local visitor (inc idx)))
-      (partition 2 team-initial-arr)))
+(def match-initial-arr (all-matches team-initial-arr))
 
 (defn seed! []
   (dt/set-timezone! "America/Los_Angeles")
@@ -110,13 +107,13 @@
       (log/info "Loading data...")
       (try
         (d/transact connection {:tx-data (concat city-initial-arr
-                                                 team-initial-arr
-                                                 league-initial-arr
-                                                 )})
+                                           team-initial-arr
+                                           league-initial-arr
+                                           match-initial-arr
+                                           )})
         (log/info "Completed.")
         (catch Exception e
           (log/error e "Failed to load data"))))))
-
 
 (defn start []
   (mount/start-with-args {:config "config/dev.edn"})
@@ -139,3 +136,5 @@
   []
   (stop)
   (tools-ns/refresh :after 'development/start))
+
+

@@ -20,7 +20,7 @@
 (defattr score :team/score :long
   {ao/identities    #{:team/id}
    ao/cardinality   :one
-   fo/default-value (int (+ 50 (rand-int 100)))
+   fo/default-value 0
    ao/schema        :production})
 
 (defattr attack :team/attack :long

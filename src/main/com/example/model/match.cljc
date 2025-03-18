@@ -1,5 +1,5 @@
 (ns com.example.model.match
-  "Functions, resolvers, and mutations supporting `account`.
+  "Functions, resolvers, and mutations supporting account.
 
    DO NOT require a RAD model file in this ns. This ns is meant to be an ultimate
    leaf of the requires. Only include library code."
@@ -11,8 +11,7 @@
     [datomic.client.api :as d]
     [taoensso.timbre :as log]
     [com.fulcrologic.fulcro.mutations :as m]
-    [com.fulcrologic.fulcro.components :as comp]
-    ))
+    [com.fulcrologic.fulcro.components :as comp]))
 
 (defn new-match
   [id league date match-day local visitor local-goals visitor-goals & {:as addl}]
@@ -46,5 +45,9 @@
      {::pc/output [{:match/all-matches [:match/id]}]}
      {:match/all-matches (get-all-matches env params)}))
 
-
 (def resolvers [all-matches-resolver])
+
+
+
+
+

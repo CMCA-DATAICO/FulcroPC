@@ -31,15 +31,22 @@
    ao/cardinality :many
    ao/identities  #{:league/id}
    ao/schema      :production
-   ro/column-EQL  {:league/teams [:team/id :team/title
-                                  :team/city [:city/id :city/title]]}})
+   ro/column-EQL  {:league/teams [:team/id
+                                  :team/title
+                                  :team/score
+                                  :team/attack
+                                  :team/mid
+                                  :team/defence
+                                  :team/city [:city/id :city/title]
+                                  :team/enable?
+                                  :team/palmares]}})
 
 (defattr ladder :league/ladder :ref
-  {ao/target :team/id
+  {ao/target      :team/id
    ao/cardinality :many
-   ao/identities #{:league/id}
-   ao/schema :production
-   ro/column-EQL {:league/ladder [:team/title]}})
+   ao/identities  #{:league/id}
+   ao/schema      :production
+   ro/column-EQL  {:league/ladder [:team/title]}})
 
 (defattr completed? :league/completed? :boolean
   {ao/identities  #{:league/id}

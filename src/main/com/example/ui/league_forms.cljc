@@ -26,8 +26,11 @@
   {ro/title             "PALMARES"
    ro/source-attribute  :league/all-leagues
    ro/row-pk            r.league/id
-   ro/columns           [r.league/year r.league/champion r.league/completed?]
+   ro/columns           [r.league/year r.league/champion r.league/completed? r.league/teams]
    ro/form-links        {r.league/champion TeamForm}
-   ro/column-formatters {:league/champion (fn [_ v _ _] (tap> v) (str (:team/title v)))}
-   ro/run-on-mount? true
-   ro/route "leagues"})
+   ro/column-formatters {:league/champion (fn [_ v _ _] (str (:team/title v)))
+                         :league/teams    (fn [_ v _ _] (str (mapv :team/title v)))}
+   ro/run-on-mount?     true
+   ro/route             "leagues"})
+
+

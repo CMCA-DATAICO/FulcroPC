@@ -7,7 +7,6 @@
     #?@(:cljs [[com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown :refer [ui-dropdown]]
                [com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown-menu :refer [ui-dropdown-menu]]
                [com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown-item :refer [ui-dropdown-item]]])
-
     [com.example.ui.account-forms :refer [AccountForm AccountList]]
     [com.example.ui.team-forms :refer [TeamForm TeamList]]
     [com.example.ui.city-forms :refer [CityForm CityList]]
@@ -22,6 +21,7 @@
     [com.fulcrologic.rad.routing :as rroute]
     [com.fulcrologic.fulcro.data-fetch :as df]
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]))
+
 
 (defn load-data [app key target]
   (df/load! app key nil {:target               (conj target key)
@@ -41,21 +41,21 @@
                         (load-data app :league/all-leagues [:component/id ::LandingPage ])
                         (load-data app :team/attributes-teams [:component/id ::LandingPage ]))))}
   (dom/div
-    (dom/h3 "Landing Page")
-    (dom/div
+    (tap> attributes-teams)
+    (dom/h1 {:style {:text-align "center" :background-color "black" :color "white" :padding "10px"}} "FPC")
+    (dom/div :.container {:style {:border "10px solid green" :padding "10px" :text-align "center"}}
       (if all-leagues
-        (dom/ul
-          (map (fn [{:league/keys [id year]}]
-                 (dom/li (str "League " id ": " year)))
-               all-leagues))
+        (map (fn [{:league/keys [id year]}]
+               (dom/h3  (str "League " year)))
+             all-leagues)
         "Loading leagues..."))
-    (dom/div :.ui.grid {:style {:display "flex" :flex-wrap "wrap"}}
+    (dom/div :.ui.grid {:style {:display "flex" :flex-wrap "wrap" :margin "10px"}}
              (if attributes-teams
                (let [chunks (partition 4 attributes-teams)]  ;; Partition the data into groups of 4
                  (map (fn [row]
-                        (dom/div :.row {:style {:width "100%"}}
+                        (dom/div :.row {:style {:width "100%" :padding "5px"}}
                                  (map (fn [{:team/keys [id title city]}]
-                                        (dom/div :.four.wide.column {:style {:border "1px solid black" :text-align "center" :flex "0 0 25%"}}
+                                        (dom/div :.four.wide.column {:style {:border "1px solid black" :text-align "center" :flex "0 0 25%" :padding "20px"}}
                                                  (str title " | City: " (:city/title city))))
                                       row)))
                       chunks))))

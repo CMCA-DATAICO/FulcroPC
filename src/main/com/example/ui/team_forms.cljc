@@ -1,59 +1,65 @@
 (ns com.example.ui.team-forms
   "Sample RAD-based components"
-  (:require
-    #?(:clj  [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]]
-       :cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]])
-    [clojure.string :as str]
-    [com.example.model-rad.team :as r.team]
-    [com.example.model-rad.city :as r.city]
-    [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
-    [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
-    [com.wsscode.pathom.connect :as pc :refer [defmutation]]
-    [com.fulcrologic.rad.control :as control]
-    [com.fulcrologic.rad.form :as form]
-    [com.fulcrologic.rad.form-options :as fo]
-    [com.fulcrologic.rad.report :as report]
-    [com.fulcrologic.rad.report-options :as ro]
-    [com.fulcrologic.rad.picker-options :as po]
-    [com.fulcrologic.fulcro.raw.components :as rc]
-    [taoensso.timbre :as log]))
+  #?(:clj
+     (:require
+       [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]])
+     :cljs
+     (:require
+       [com.fulcrologic.fulcro.dom :as dom :refer [div label input]]
+       [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
+       [com.fulcrologic.rad.form :as form]
+       [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
+       [com.fulcrologic.rad.control :as control]
+       [com.fulcrologic.rad.form-options :as fo]
+       [com.fulcrologic.rad.report :as report]
+       [com.fulcrologic.rad.report-options :as ro]
+       [com.fulcrologic.rad.picker-options :as po]
+       [clojure.string :as str]
+       [com.example.model-rad.team :as r.team]
+       [com.example.model-rad.city :as r.city]
+       [com.fulcrologic.fulcro.raw.components :as rc]
+       [taoensso.timbre :as log])))
+
+
 
 #_(m/defmutation toggle-team-active
     [{:keys [team/id]}]
     (remote [env]
-            (assoc env :remote `com.example.server.mutations/set-team-active)))
+      (assoc env :remote `com.example.server.mutations/set-team-active)))
 
 #?(:cljs
    (m/defmutation toggle-enable [{:keys [team/id] :as params}]
      (action [{:keys [app state] :as env}]
-             (swap! state update-in [:team/id id :team/enable?] not))
+       (swap! state update-in [:team/id id :team/enable?] not))
      (remote [env] true)
      (ok-action [{:keys [app state result]}]
-                (println "It WORK!"))))
+       (println "It WORK!"))))
+
+(form/defsc-form TeamForm
+  [this props]
+  {fo/id            r.team/id
+   fo/attributes    [r.team/title
+                     r.team/city]
+   fo/route-prefix  "team"
+   fo/title         "Team Form"})
 
 
-#?(:clj
-   (pc/defmutation toggle-enable [env {id :team/id :as params}]
-                   {::pc/params #{:team/id}}
-                   (db/toggle-enable id)
-                   nil))
 
-
-(form/defsc-form TeamForm [this {:keys [cities] :as props}]
-  {fo/id           r.team/id
-   fo/attributes   [r.team/title
-                    r.team/city]
+#_(form/defsc-form TeamForm [this props]
+  [fo/id r.team/id
+   fo/attributes [r.team/title
+                  r.team/city]
    fo/route-prefix "team"
-   fo/title        "Create Teams"
+   fo/title "Create Teams"
    fo/field-styles {:team/city :pick-one}
-   fo/field-options {:team/city   {po/query-key       :city/all-cities
-                                     po/query-component (rc/nc [:city/title :city/id])
-                                     po/options-xform   (fn [normalize-response raw-response]
-                                                          (mapv
-                                                            (fn [{:city/keys [id title]}]
-                                                              {:text title :value [:city/id id]})
-                                                            (sort-by :city/title raw-response)
-                                                            ))}}})
+   fo/field-options {:team/city {po/query-key       :city/all-cities
+                                 po/query-component (rc/nc [:city/title :city/id])
+                                 po/options-xform   (fn [normalize-response raw-response]
+                                                      (mapv
+                                                        (fn [{:city/keys [id title]}]
+                                                          {:text title :value [:city/id id]})
+                                                        (sort-by :city/title raw-response)
+                                                        ))}}])
 
 
 ;; NOTE: any form can be used as a subform, but when you do so you must add addl config here
@@ -71,11 +77,11 @@
    :ident :team/id}
   (let [{:keys [edit-form entity-id]} (report/form-link report-instance props :team/id)]
     (dom/div :.item
-             (dom/i :.large.github.middle.aligned.icon)
-             (div :.content
-                  (if edit-form
-                    (dom/a :.header {:onClick (fn [] (form/edit! this edit-form entity-id))} title)
-                    (dom/div :.header title)))))
+      (dom/i :.large.github.middle.aligned.icon)
+      (div :.content
+        (if edit-form
+          (dom/a :.header {:onClick (fn [] (form/edit! this edit-form entity-id))} title)
+          (dom/div :.header title)))))
 
   #_(dom/tr
       (dom/td :.right.aligned title)
@@ -100,7 +106,7 @@
    ;; ro/column-formatters   {:team/active? (fn [this v] (if v "Yes" "No"))}
    ;;ro/row-visible?
    #_(fn [{::keys [filter-title]} {:team/keys [title]}]
-       (let [nm (some-> title (str/lower-case))
+       (let [nm     (some-> title (str/lower-case))
              target (some-> filter-title (str/trim) (str/lower-case))]
          (or
            (nil? target)
@@ -139,16 +145,16 @@
                             :action (fn [this {:team/keys [id]}]
                                       #?(:cljs
                                          (comp/transact! this
-                                                         [(toggle-enable {:team/id id})])))
+                                           [(toggle-enable {:team/id id})])))
                             }
                            #_{
-                            :action (print "Helado")
-                            #_(fn [report-instance {:team/keys [id]}]
-                                #_#?(:cljs
-                                     (comp/transact! report-instance [(team/set-team-active {:team/id id})])))
-                            ;:visible?  (fn [_ row-props] (:team/active? row-props))
-                            ;:disabled? (fn [_ row-props] (not (:team/active? row-props)))
-                            }]
+                              :action (print "Helado")
+                              #_(fn [report-instance {:team/keys [id]}]
+                                  #_#?(:cljs
+                                       (comp/transact! report-instance [(team/set-team-active {:team/id id})])))
+                              ;:visible?  (fn [_ row-props] (:team/active? row-props))
+                              ;:disabled? (fn [_ row-props] (not (:team/active? row-props)))
+                              }]
 
    ro/route               "teams"})
 
@@ -156,12 +162,12 @@
     ;(report/render-controls this)
     (report/render-control this ::new-team)
     (dom/button :.ui.green.button {:onClick (fn [] (form/create! this teamForm))}
-                "Boo")
+      "Boo")
     #_(div :.ui.form
-           (div :.field
-                (dom/label "Filter")
-                (report/render-control this ::filter-title)))
+        (div :.field
+          (dom/label "Filter")
+          (report/render-control this ::filter-title)))
     #_(dom/div :.ui.list
-               (mapv (fn [row]
-                       (ui-team-list-item row))
-                     current-rows)))
+        (mapv (fn [row]
+                (ui-team-list-item row))
+          current-rows)))

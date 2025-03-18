@@ -51,7 +51,8 @@
      [env query-params]
      (log/debug (some-> (get-in env [do/databases :production]) deref))
      (if-let [db (some-> (get-in env [do/databases :production]) deref)]
-       (let [ids (d/q '[:find (pull ?e [:team/id :team/title :team/score {:team/city [*]} :team/enable? :team/palmares])
+       (let [ids (d/q '[:find (pull ?e [:team/id :team/title :team/score
+                                        {:team/city [*]} :team/enable? :team/palmares])
                         :where [?e :team/id _]] db)]
          (mapv first ids))
        (log/error "No database atom for production schema!"))))
