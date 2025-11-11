@@ -4,7 +4,8 @@
  :builds   {:main     {:target     :browser
                        :output-dir "resources/public/js/main"
                        :asset-path "/js/main"
-                       :dev        {:compiler-options {}}
+                       :dev        {:compiler-options {:warnings {:fn-deprecated false
+                                                                  :redef false}}}
                        :modules    {:main {:init-fn com.example.client/init}}
                        :js-options {:resolve
                                     {
