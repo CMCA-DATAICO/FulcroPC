@@ -24,6 +24,7 @@
            hiccup/hiccup                          {:mvn/version "1.0.5"}
            ring/ring-defaults                     {:mvn/version "0.3.4"}
            ring/ring-core                         {:mvn/version "1.9.6"}
+           org.clojure/data.json                  {:mvn/version "2.4.0"}
            http-kit/http-kit                      {:mvn/version "2.6.0"}
            com.datomic/local                      {:mvn/version "1.0.277"}
            com.fulcrologic/fulcro-rad-datomic     {:mvn/version "1.3.2"}

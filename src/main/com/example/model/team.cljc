@@ -14,21 +14,6 @@
     [com.fulcrologic.fulcro.components :as comp]
     ))
 
-(defn new-team
-  [id title city score attack mid defence enable? palmares & {:as addl}]
-  (merge
-    {:db/id         title
-     :team/id       id
-     :team/title    title
-     :team/city     city
-     :team/score    score
-     :team/attack   attack
-     :team/mid      mid
-     :team/defence  defence
-     :team/enable?  enable?
-     :team/palmares palmares}
-    addl))
-
 #?(:clj
    (defn get-all-teams
      [env query-params]

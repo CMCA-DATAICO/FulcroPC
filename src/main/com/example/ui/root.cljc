@@ -38,12 +38,12 @@
                     (dr/route-deferred
                       [:component/id ::LandingPage]
                       (fn []
-                        (load-data app :league/all-leagues [:component/id ::LandingPage ])
-                        (load-data app :team/attributes-teams [:component/id ::LandingPage ]))))}
-  (dom/div
+                        (load-data app :league/all-leagues [:component/id ::LandingPage])
+                        (load-data app :team/attributes-teams [:component/id ::LandingPage]))))}
+  (dom/div :.space-y-8
     (tap> attributes-teams)
-    (dom/h1 {:style {:text-align "center" :background-color "black" :color "white" :padding "10px"}} "FPC")
-    (dom/div :.container {:style {:border "10px solid green" :padding "10px" :text-align "center"}}
+    (dom/div :.font-poppins.text-black.text-3xl.font-bold.text-center "FPC")
+    (dom/div :.border-4.border-green-500.p-4.text-center.bg-green-50.rounded
       (if all-leagues
         (map (fn [{:league/keys [id year]}]
                (dom/h3  (str "League " year)))
@@ -91,29 +91,28 @@
        (let [busy? (seq active-remotes)]
          (dom/div
            (div :.ui.top.menu
-                (comp/fragment
-                  (dom/div :.ui.item {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
-                  (ui-dropdown {:className "item" :text "Tournament"}
-                               (ui-dropdown-menu {}
-                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this LeagueList {}))} "Tournament")
-                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this MatchList {}))} "All Matches")
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this MatchForm {}))} "New Match")
-                                                 ))
-                  (ui-dropdown {:className "item" :text "Team"}
-                               (ui-dropdown-menu {}
-                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "All Teams")
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm {}))} "New Team")
-                                                 ))
-                  (ui-dropdown {:className "item" :text "City"}
-                               (ui-dropdown-menu {}
-                                                 (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this CityList {}))} "All City")
-                                                 (ui-dropdown-item {:onClick (fn [] (form/create! this CityForm))} "New City")
-                                                 ))
-                  (div :.ui.tiny.loader {:classes [(when busy? "active")]})))
+             (comp/fragment
+               (dom/div :.ui.item {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
+               (ui-dropdown {:className "item" :text "Tournament"}
+                 (ui-dropdown-menu {}
+                   (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this LeagueList {}))} "Tournament")
+                   (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this MatchList {}))} "All Matches")
+                   (ui-dropdown-item {:onClick (fn [] (form/create! this MatchForm {}))} "New Match")
+                   ))
+               (ui-dropdown {:className "item" :text "Team"}
+                 (ui-dropdown-menu {}
+                   (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this TeamList {}))} "All Teams")
+                   (ui-dropdown-item {:onClick (fn [] (form/create! this TeamForm {}))} "New Team")
+                   ))
+               (ui-dropdown {:className "item" :text "City"}
+                 (ui-dropdown-menu {}
+                   (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this CityList {}))} "All City")
+                   (ui-dropdown-item {:onClick (fn [] (form/create! this CityForm))} "New City")
+                   ))
+               (div :.ui.tiny.loader {:classes [(when busy? "active")]})))
            (div :.ui.segment
-                (ui-main-router router))))
+             (ui-main-router router))))
        (div :.ui.active.dimmer
-            (div :.ui.large.text.loader "Loading")))))
+         (div :.ui.large.text.loader "Loading")))))
 
 (def ui-root (comp/factory Root))
-

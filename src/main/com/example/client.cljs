@@ -7,11 +7,12 @@
     [com.fulcrologic.fulcro.components :as comp]
     [com.fulcrologic.fulcro.mutations :as m]
     [com.fulcrologic.rad.application :as rad-app]
-    [com.fulcrologic.rad.rendering.semantic-ui.semantic-ui-controls :as sui]
+    [com.fulcrologic.fulcro.inspect.inspect-client :as inspect]
     [com.fulcrologic.rad.report :as report]
     [com.fulcrologic.rad.routing.history :as history]
     [com.fulcrologic.rad.routing.html5-history :as hist5 :refer [html5-history]]
     [com.fulcrologic.rad.type-support.date-time :as datetime]
+    [com.fulcrologic.rad.rendering.semantic-ui.semantic-ui-controls :as sui]
     [taoensso.timbre :as log]))
 
 (defn setup-RAD [app]
@@ -32,6 +33,7 @@
     (swap! state assoc :ui/ready? true)))
 
 (defn init []
+  (inspect/install {}) ; To run Fulcro Inspect
   ;; makes js console logging a bit nicer
   (log/merge-config! {:output-fn prefix-output-fn
                       :appenders {:console (console-appender)}})
