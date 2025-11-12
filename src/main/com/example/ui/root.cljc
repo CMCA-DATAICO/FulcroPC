@@ -30,7 +30,7 @@
 
 (defsc LandingPage [this {:keys [league/all-leagues team/attributes-teams]}]
   {:query         [{:league/all-leagues [:league/id :league/year]}
-                   {:team/attributes-teams [:team/id :team/title :team/city]}]
+                   {:team/attributes-teams [:team/id :team/title :team/city :team/badge]}]
    :ident         (fn [] [:component/id ::LandingPage])
    :initial-state {}
    :route-segment ["landing-page"]
@@ -40,27 +40,32 @@
                       (fn []
                         (load-data app :league/all-leagues [:component/id ::LandingPage])
                         (load-data app :team/attributes-teams [:component/id ::LandingPage]))))}
-  (dom/div :.ui.grid
+  (dom/div :.ui.grid.bg-gray-400
     (dom/div :.row
       (dom/div :.column
-        (dom/div :.flex.flex-col.p-10
-          (dom/div :.font-poppins.text-black.font-bold.text-center.text-4xl "FPC")
-          (dom/div :.border.border-green-500.p-4.text-center.bg-green-50.m-10
+        (dom/div :.flex.flex-col
+          (dom/div :.ui.container.mt-4
+            (dom/div :.font-inter.text-blue.font-bold.text-center.text-4xl "FULCRO PROFESIONAL COLOMBIANO"))
+          (dom/div :.border.border-black.text-center.bg-white.m-10.py-4.rounded-lg.cursor-pointer
             (if all-leagues
               (map (fn [{:league/keys [id year]}]
-                     (dom/h3 {:key id} (str "League " year)))
+                     (dom/div :.font-poppins.font-semibold.text-2xl {:key id} (str "Liga Mustang " year)))
                 all-leagues)
               "Loading leagues...")))))
     (if attributes-teams
       (let [chunks (partition 4 attributes-teams)]          ;; Partition the data into groups of 4
         (map (fn [row]
                (dom/div :.row.w-full.mx-10 {:key (str "row-" (first row))}
-                 (map (fn [{:team/keys [id title city]}]
+                 (map (fn [{:team/keys [id title city badge]}]
                         (dom/div :.four.wide.column {:key id}
-                          (dom/div :.flex.flex-col.border.p-10.items-center.justify-center.text-center
-                            (str title " | City: " (:city/title city))
-                            (dom/div
-                              (str "Image")))))
+                          (dom/div :.flex.flex-row.border.p-8.items-center.justify-center.text-center.gap-4.bg-white.cursor-pointer
+                            (when badge
+                              (dom/img {:src   (str "shields/" badge)
+                                        :alt   title
+                                        :class "w-18 h-18 object-contain"}))
+                            (dom/div :.flex.flex-col.p-2
+                              (dom/div :.font-bold title)
+                              (dom/div :.text-sm (str (:city/title city)))))))
                    row)))
           chunks)))))
 
@@ -92,10 +97,10 @@
   #?(:cljs
      (if ready?
        (let [busy? (seq active-remotes)]
-         (dom/div
+         (dom/div {:style {:background "linear-gradient(to right, #FBBF24 0%, #FBBF24 50%, #2563EB 50%, #2563EB 75%, #DC2626 75%, #DC2626 100%)"}}
            (div :.ui.top.menu
              (comp/fragment
-               (dom/div :.ui.item {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
+               (dom/div :.ui.item.cursor-pointer {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
                (ui-dropdown {:className "item" :text "Tournament"}
                  (ui-dropdown-menu {}
                    (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this LeagueList {}))} "Tournament")

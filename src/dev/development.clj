@@ -39,22 +39,22 @@
 
 (def team-initial-arr
   "This vector contains a pre-seed for teams"
-  [{:team/id (new-uuid) :team/title "Atletico Nacional" :team/city "Medellin" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Independiente Medellin" :team/city "Medellin" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Millonarios" :team/city "Bogota" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Santa Fe" :team/city "Bogota" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "America de Cali" :team/city "Cali" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Deportivo Cali" :team/city "Cali" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Junior" :team/city "Barranquilla" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Once Caldas" :team/city "Manizales" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Deportes Tolima" :team/city "Ibague" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Atletico Bucaramanga" :team/city "Bucaramanga" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Deportivo Pereira" :team/city "Pereira" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Patriotas" :team/city "Tunja" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Union Magdalena" :team/city "Santa Marta" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Deportivo Pasto" :team/city "Pasto" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Envigado" :team/city "Envigado" :team/score (rand-int 100)}
-   {:team/id (new-uuid) :team/title "Huila" :team/city "Neiva" :team/score (rand-int 100)}])
+  [{:team/id (new-uuid) :team/title "Atletico Nacional" :team/city "Medellin" :team/score (rand-int 100) :team/badge "Atlético Nacional.png"}
+   {:team/id (new-uuid) :team/title "Independiente Medellin" :team/city "Medellin" :team/score (rand-int 100) :team/badge "Medellín.png"}
+   {:team/id (new-uuid) :team/title "Millonarios" :team/city "Bogota" :team/score (rand-int 100) :team/badge "Millonarios.png"}
+   {:team/id (new-uuid) :team/title "Santa Fe" :team/city "Bogota" :team/score (rand-int 100) :team/badge "Santa Fe.png"}
+   {:team/id (new-uuid) :team/title "America de Cali" :team/city "Cali" :team/score (rand-int 100) :team/badge "América de Cali.png"}
+   {:team/id (new-uuid) :team/title "Deportivo Cali" :team/city "Cali" :team/score (rand-int 100) :team/badge "Deportivo Cali.png"}
+   {:team/id (new-uuid) :team/title "Junior" :team/city "Barranquilla" :team/score (rand-int 100) :team/badge "Junior.png"}
+   {:team/id (new-uuid) :team/title "Once Caldas" :team/city "Manizales" :team/score (rand-int 100) :team/badge "Once Caldas.png"}
+   {:team/id (new-uuid) :team/title "Deportes Tolima" :team/city "Ibague" :team/score (rand-int 100) :team/badge "Tolima.png"}
+   {:team/id (new-uuid) :team/title "Atletico Bucaramanga" :team/city "Bucaramanga" :team/score (rand-int 100) :team/badge "Bucaramanga.png"}
+   {:team/id (new-uuid) :team/title "Deportivo Pereira" :team/city "Pereira" :team/score (rand-int 100) :team/badge "Pereira.png"}
+   {:team/id (new-uuid) :team/title "Patriotas" :team/city "Tunja" :team/score (rand-int 100) :team/badge "Patriotas Boyacá.png"}
+   {:team/id (new-uuid) :team/title "Union Magdalena" :team/city "Santa Marta" :team/score (rand-int 100) :team/badge "Unión Magdalena.png"}
+   {:team/id (new-uuid) :team/title "Deportivo Pasto" :team/city "Pasto" :team/score (rand-int 100) :team/badge "Pasto.png"}
+   {:team/id (new-uuid) :team/title "Envigado" :team/city "Envigado" :team/score (rand-int 100) :team/badge "Envigado.png"}
+   {:team/id (new-uuid) :team/title "Huila" :team/city "Neiva" :team/score (rand-int 100) :team/badge "Huila.png"}])
 
 (def league-initial-arr
   "Pre-seed league - Now it's working"

@@ -61,4 +61,9 @@
    ro/column-EQL  {:team/palmares [:league/id :league/year :league/champion :league/completed?]}
    })
 
-(def attributes [id title score attack mid defence city enable? palmares])
+(defattr badge :team/badge :string
+  {ao/identities  #{:team/id}
+   ao/cardinality :one
+   ao/schema      :production})
+
+(def attributes [id title score attack mid defence city enable? palmares badge])

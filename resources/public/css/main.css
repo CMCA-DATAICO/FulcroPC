@@ -11,8 +11,10 @@
     --color-red-400: #EF5753;
     --color-red-500: #E3342F;
     --color-red-600: #CC1F1A;
+    --color-yellow-400: #FFF382;
     --color-yellow-500: #FFED4A;
-    --color-green-50: oklch(98.2% 0.018 155.826);
+    --color-yellow-600: #F2D024;
+    --color-yellow-700: oklch(55.4% 0.135 66.442);
     --color-green-500: #38C172;
     --color-green-600: #1F9D55;
     --color-blue-500: #3490DC;
@@ -26,17 +28,23 @@
     --color-gray-700: #606F7B;
     --color-gray-900: #22292F;
     --color-black: #000;
+    --color-white: #fff;
     --spacing: 0.25rem;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
     --text-2xl: 1.5rem;
     --text-2xl--line-height: calc(2 / 1.5);
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: calc(2.25 / 1.875);
     --text-4xl: 2.25rem;
     --text-4xl--line-height: calc(2.5 / 2.25);
-    --text-6xl: 3.75rem;
-    --text-6xl--line-height: 1;
+    --font-weight-semibold: 600;
     --font-weight-bold: 700;
+    --radius-lg: 0.5rem;
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
     --font-poppins: Poppins, sans-serif;
+    --font-inter: Inter, sans-serif;
     --color-brand: #ED5650;
     --color-dataico-purple: #6764F3;
     --color-dataico-soft-gray: #F5F5F5;
@@ -203,17 +211,29 @@
   .relative {
     position: relative;
   }
-  .m-0 {
-    margin: calc(var(--spacing) * 0);
-  }
-  .m-2 {
-    margin: calc(var(--spacing) * 2);
+  .container {
+    width: 100%;
+    @media (width >= 40rem) {
+      max-width: 40rem;
+    }
+    @media (width >= 48rem) {
+      max-width: 48rem;
+    }
+    @media (width >= 64rem) {
+      max-width: 64rem;
+    }
+    @media (width >= 80rem) {
+      max-width: 80rem;
+    }
+    @media (width >= 96rem) {
+      max-width: 96rem;
+    }
   }
   .m-10 {
     margin: calc(var(--spacing) * 10);
   }
-  .mx-2 {
-    margin-inline: calc(var(--spacing) * 2);
+  .m-20 {
+    margin: calc(var(--spacing) * 20);
   }
   .mx-10 {
     margin-inline: calc(var(--spacing) * 10);
@@ -221,11 +241,14 @@
   .mx-20 {
     margin-inline: calc(var(--spacing) * 20);
   }
+  .my-5 {
+    margin-block: calc(var(--spacing) * 5);
+  }
   .my-10 {
     margin-block: calc(var(--spacing) * 10);
   }
-  .mb-10 {
-    margin-bottom: calc(var(--spacing) * 10);
+  .mt-4 {
+    margin-top: calc(var(--spacing) * 4);
   }
   .flex {
     display: flex;
@@ -236,8 +259,11 @@
   .table {
     display: table;
   }
-  .h-full {
-    height: 100%;
+  .h-18 {
+    height: calc(var(--spacing) * 18);
+  }
+  .w-18 {
+    width: calc(var(--spacing) * 18);
   }
   .w-full {
     width: 100%;
@@ -245,11 +271,17 @@
   .border-collapse {
     border-collapse: collapse;
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   .resize {
     resize: both;
   }
   .flex-col {
     flex-direction: column;
+  }
+  .flex-row {
+    flex-direction: row;
   }
   .flex-wrap {
     flex-wrap: wrap;
@@ -260,42 +292,66 @@
   .justify-center {
     justify-content: center;
   }
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+  .rounded {
+    border-radius: 0.25rem;
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .border-green-500 {
-    border-color: var(--color-green-500);
+  .border-black {
+    border-color: var(--color-black);
   }
-  .bg-green-50 {
-    background-color: var(--color-green-50);
+  .border-yellow-400 {
+    border-color: var(--color-yellow-400);
   }
-  .p-0 {
-    padding: calc(var(--spacing) * 0);
+  .border-yellow-600 {
+    border-color: var(--color-yellow-600);
+  }
+  .border-yellow-700 {
+    border-color: var(--color-yellow-700);
+  }
+  .bg-black {
+    background-color: var(--color-black);
+  }
+  .bg-gray-400 {
+    background-color: var(--color-gray-400);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .object-contain {
+    object-fit: contain;
+  }
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
   }
   .p-4 {
     padding: calc(var(--spacing) * 4);
   }
+  .p-8 {
+    padding: calc(var(--spacing) * 8);
+  }
   .p-10 {
     padding: calc(var(--spacing) * 10);
-  }
-  .px-2 {
-    padding-inline: calc(var(--spacing) * 2);
-  }
-  .px-10 {
-    padding-inline: calc(var(--spacing) * 10);
   }
   .px-20 {
     padding-inline: calc(var(--spacing) * 20);
   }
-  .py-2 {
-    padding-block: calc(var(--spacing) * 2);
-  }
-  .py-10 {
-    padding-block: calc(var(--spacing) * 10);
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
   }
   .text-center {
     text-align: center;
+  }
+  .font-inter {
+    font-family: var(--font-inter);
   }
   .font-poppins {
     font-family: var(--font-poppins);
@@ -304,20 +360,25 @@
     font-size: var(--text-2xl);
     line-height: var(--tw-leading, var(--text-2xl--line-height));
   }
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
   .text-4xl {
     font-size: var(--text-4xl);
     line-height: var(--tw-leading, var(--text-4xl--line-height));
   }
-  .text-6xl {
-    font-size: var(--text-6xl);
-    line-height: var(--tw-leading, var(--text-6xl--line-height));
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
   }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
-  .text-black {
-    color: var(--color-black);
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
   }
   .text-dataico-purple {
     color: var(--color-dataico-purple);
@@ -391,6 +452,12 @@
   .text-grey-darker {
     color: var(--color-gray-700);
   }
+  .text-blue {
+    color: var(--color-blue-600);
+  }
+  .text-red {
+    color: var(--color-red-600);
+  }
   a.text-dataico-purple, .text-dataico-purple {
     color: var(--color-dataico-purple) !important;
   }
@@ -439,6 +506,9 @@
   }
   .dataico-border-gray {
     border-color: var(--color-gray-300);
+  }
+  .dataico-border-yellow {
+    border-color: var(--color-yellow-500);
   }
 }
 @property --tw-border-style {
