@@ -1,3 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import "tailwindcss";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  /* Dataico utility classes with higher specificity to override Semantic UI */
+
+
+  /* Text Colors */
+  .dataico-text-red { color: var(--color-red-500); }
+  .dataico-text-red-400 { color: var(--color-red-400); }
+  .dataico-text-red-600 { color: var(--color-red-600); }
+  .dataico-text-light-gray { color: var(--color-gray-300); }
+  .dataico-text-gray-600 { color: var(--color-gray-600); }
+  .dataico-text-gray-500 { color: var(--color-gray-500); }
+  .dataico-text-dark-gray { color: var(--color-gray-700); }
+  .dataico-text-gray-darker { color: var(--color-gray-900); }
+  .dataico-text-blue { color: var(--color-blue-500); }
+  .dataico-text-blue-600 { color: var(--color-blue-600); }
+  .dataico-text-green { color: var(--color-green-500); }
+  .dataico-text-green-600 { color: var(--color-green-600); }
+  .dataico-text-yellow { color: var(--color-yellow-500); }
+  .dataico-text-white { color: white; }
+  .dataico-text-black { color: black; }
+  .text-grey-darker { color: var(--color-gray-700);}
+
+  /* Fix for links - higher specificity for Semantic UI */
+  a.text-dataico-purple,
+  .text-dataico-purple {
+    color: var(--color-dataico-purple) !important;
+  }
+
+  a.text-dataico-warning,
+  .text-dataico-warning {
+    color: var(--color-dataico-warning) !important;
+  }
+
+  /* Fix underline - Semantic UI removes it by default */
+  a.underline,
+  .underline {
+    text-decoration: underline !important;
+  }
+
+  /* Background Colors */
+  .dataico-bg-red { background-color: var(--color-red-500); }
+  .dataico-bg-blue { background-color: var(--color-blue-500); }
+  .dataico-bg-green { background-color: var(--color-green-500); }
+  .dataico-bg-gray-100 { background-color: var(--color-gray-100); }
+  .dataico-bg-grey {background-color: var(--color-gray-400);}
+  .dataico-bg-mid-gray {background-color: var(--color-gray-500);}
+  .dataico-bg-soft-gray {background-color: var(--color-dataico-soft-gray);}
+  .dataico-bg-white { background-color: white;}
+  .dataico-bg-brand { background-color: var(--color-brand); }
+
+  /* High specificity for Semantic UI labels */
+  .ui.label.mini.dataico-green,
+  .ui.label.dataico-green,
+  .dataico-green {
+    background-color: var(--color-dataico-soft-green) !important;
+    color: var(--color-dataico-success);
+  }
+
+  /* Border Colors */
+  .dataico-border-red { border-color: var(--color-red-500); }
+  .dataico-border-gray-200 { border-color: var(--color-gray-200); }
+  .dataico-border-gray { border-color: var(--color-gray-300); }
+}
+
+@theme {
+    --font-open-sans: Open Sans, sans-serif;
+    --font-poppins: Poppins, sans-serif;
+    --font-inter: Inter, sans-serif;
+
+    /* NEW BRAND */
+    --color-brand: #ED5650;
+
+  /* 50, 300, 700, and 950 skipped intentionally when porting from Tailwind v0.7. They are still available to use. */
+  --color-red-100: #FCEBEA;
+  --color-red-200: #F9ACAA;
+  --color-red-400: #EF5753;
+  --color-red-500: #E3342F;
+  --color-red-600: #CC1F1A;
+  --color-red-800: #621B18;
+  --color-red-900: #3B0D0C;
+  --color-orange-100: #FFF5EB;
+  --color-orange-200: #FCD9B6;
+  --color-orange-400: #FAAD63;
+  --color-orange-500: #F6993F;
+  --color-orange-600: #DE751F;
+  --color-orange-800: #613B1F;
+  --color-orange-900: #462A16;
+  --color-yellow-100: #FCFBEB;
+  --color-yellow-200: #FFF9C2;
+  --color-yellow-400: #FFF382;
+  --color-yellow-500: #FFED4A;
+  --color-yellow-600: #F2D024;
+  --color-yellow-800: #684F1D;
+  --color-yellow-900: #453411;
+  --color-green-100: #E3FCEC;
+  --color-green-200: #A2F5BF;
+  --color-green-400: #51D88A;
+  --color-green-500: #38C172;
+  --color-green-600: #1F9D55;
+  --color-green-800: #1A4731;
+  --color-green-900: #0F2F21;
+  --color-teal-100: #E8FFFE;
+  --color-teal-200: #A0F0ED;
+  --color-teal-400: #64D5CA;
+  --color-teal-500: #4DC0B5;
+  --color-teal-600: #38A89D;
+  --color-teal-800: #20504F;
+  --color-teal-900: #0D3331;
+  --color-blue-100: #EFF8FF;
+  --color-blue-200: #BCDEFA;
+  --color-blue-400: #6CB2EB;
+  --color-blue-500: #3490DC;
+  --color-blue-600: #2779BD;
+  --color-blue-800: #1C3D5A;
+  --color-blue-900: #12283A;
+  --color-indigo-100: #E6E8FF;
+  --color-indigo-200: #B2B7FF;
+  --color-indigo-400: #7886D7;
+  --color-indigo-500: #6574CD;
+  --color-indigo-600: #5661B3;
+  --color-indigo-800: #2F365F;
+  --color-indigo-900: #191E38;
+  --color-purple-100: #F3EBFF;
+  --color-purple-200: #D6BBFC;
+  --color-purple-400: #A779E9;
+  --color-purple-500: #9561E2;
+  --color-purple-600: #794ACF;
+  --color-purple-800: #382B5F;
+  --color-purple-900: #21183C;
+  --color-pink-100: #FFEBEF;
+  --color-pink-200: #FFBBCA;
+  --color-pink-400: #FA7EA8;
+  --color-pink-500: #F66D9B;
+  --color-pink-600: #EB5286;
+  --color-pink-800: #6F213F;
+  --color-pink-900: #451225;
+  --color-gray-100: #F8FAFC;
+  --color-gray-200: #F1F5F8;
+  --color-gray-400: #DAE1E7;
+  --color-gray-500: #B8C2CC;
+  --color-gray-600: #8795A1;
+  --color-gray-700: #606F7B;
+  --color-gray-800: #3D4852;
+  --color-gray-900: #22292F;
+
+  --color-dataico-aqua: #00bcd4;
+  --color-dataico-soft-blue: #F8FDFE;
+  --color-dataico-red: #E61C21;
+  --color-dataico-soft-red: #FEF2F2;
+  --color-dataico-dark-red: #B91C1C;
+  --color-dataico-blue: #1E96D2;
+  --color-dataico-purple: #6764F3;
+  --color-soft-dataico-purple: #E1E1FE;
+  --color-grey: #B8C2CC;
+  --color-soft-gray: #E5E5E5;
+  --color-mid-gray: #737373;
+  --color-dataico-lavender: #EFEFFD;
+  --color-dataico-soft-gray: #F5F5F5;
+  --color-dataico-gray: #262626;
+  --color-dataico-off-purple: #6764F31F;
+  --color-dataico-purple-dimmed: #EEF2FF;
+  --color-dataico-mid-gray: #D9D9D9;
+  --color-dataico-soft-warning: #FFFBEB;
+  --color-dataico-off-warning: #FEF3C7;
+  --color-dataico-warning: #F59E0B;
+  --color-dataico-success: #22C55E;
+  --color-dataico-yellow: #FFFBEB;
+  --color-dataico-dark-yellow: #B45309;
+  --color-dataico-soft-green: #F0FDF4;
+  --color-dataico-light-blue: #F9FEFF;
+  --color-dataico-light-gray: #F9F9F9;
+  --color-dataico-off-green: #DCFCE7;
+  --color-dataico-soft-orange: #FFFBEB;
+  --color-dataico-orange: #F59E0B;
+}

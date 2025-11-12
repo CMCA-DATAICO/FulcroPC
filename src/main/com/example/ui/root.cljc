@@ -40,26 +40,29 @@
                       (fn []
                         (load-data app :league/all-leagues [:component/id ::LandingPage])
                         (load-data app :team/attributes-teams [:component/id ::LandingPage]))))}
-  (dom/div :.space-y-8
-    (tap> attributes-teams)
-    (dom/div :.font-poppins.text-black.text-3xl.font-bold.text-center "FPC")
-    (dom/div :.border-4.border-green-500.p-4.text-center.bg-green-50.rounded
-      (if all-leagues
-        (map (fn [{:league/keys [id year]}]
-               (dom/h3  (str "League " year)))
-             all-leagues)
-        "Loading leagues..."))
-    (dom/div :.ui.grid {:style {:display "flex" :flex-wrap "wrap" :margin "10px"}}
-             (if attributes-teams
-               (let [chunks (partition 4 attributes-teams)]  ;; Partition the data into groups of 4
-                 (map (fn [row]
-                        (dom/div :.row {:style {:width "100%" :padding "5px"}}
-                                 (map (fn [{:team/keys [id title city]}]
-                                        (dom/div :.four.wide.column {:style {:border "1px solid black" :text-align "center" :flex "0 0 25%" :padding "20px"}}
-                                                 (str title " | City: " (:city/title city))))
-                                      row)))
-                      chunks))))
-    ))
+  (dom/div :.ui.grid
+    (dom/div :.row
+      (dom/div :.column
+        (dom/div :.flex.flex-col.p-10
+          (dom/div :.font-poppins.text-black.font-bold.text-center.text-4xl "FPC")
+          (dom/div :.border.border-green-500.p-4.text-center.bg-green-50.m-10
+            (if all-leagues
+              (map (fn [{:league/keys [id year]}]
+                     (dom/h3 {:key id} (str "League " year)))
+                all-leagues)
+              "Loading leagues...")))))
+    (if attributes-teams
+      (let [chunks (partition 4 attributes-teams)]          ;; Partition the data into groups of 4
+        (map (fn [row]
+               (dom/div :.row.w-full.mx-10 {:key (str "row-" (first row))}
+                 (map (fn [{:team/keys [id title city]}]
+                        (dom/div :.four.wide.column {:key id}
+                          (dom/div :.flex.flex-col.border.p-10.items-center.justify-center.text-center
+                            (str title " | City: " (:city/title city))
+                            (dom/div
+                              (str "Image")))))
+                   row)))
+          chunks)))))
 
 ;; This will just be a normal router...but there can be many of them.
 (defrouter MainRouter [this {:keys [current-state route-factory route-props]}]
@@ -110,7 +113,7 @@
                    (ui-dropdown-item {:onClick (fn [] (form/create! this CityForm))} "New City")
                    ))
                (div :.ui.tiny.loader {:classes [(when busy? "active")]})))
-           (div :.ui.segment
+           (div :.ui.basic.segment
              (ui-main-router router))))
        (div :.ui.active.dimmer
          (div :.ui.large.text.loader "Loading")))))

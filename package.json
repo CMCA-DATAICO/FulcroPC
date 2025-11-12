@@ -16,6 +16,7 @@
     "victory": "^36.2.0"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.1.17",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "shadow-cljs": "2.15.12",
