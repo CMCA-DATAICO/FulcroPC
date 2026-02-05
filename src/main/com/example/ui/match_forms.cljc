@@ -1,16 +1,13 @@
 (ns com.example.ui.match-forms
   "Sample RAD-based components"
   (:require
-    ;; Platform-specific imports
-    #?(:clj [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]])
-    #?(:cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]]
-       [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
-       [com.fulcrologic.rad.form :as form])
-    ;; Shared imports
+    #?(:clj  [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]]
+       :cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]])
     [clojure.string :as str]
     [com.example.model-rad.team :as r.team]
     [com.example.model-rad.match :as r.match]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
+    [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
     [com.fulcrologic.fulcro.raw.components :as rc]
     [com.fulcrologic.rad.control :as control]
     [com.fulcrologic.rad.form :as form]

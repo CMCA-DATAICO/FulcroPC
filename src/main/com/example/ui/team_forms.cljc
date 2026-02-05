@@ -1,24 +1,21 @@
 (ns com.example.ui.team-forms
   "Sample RAD-based components"
-  #?(:clj
-     (:require
-       [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]])
-     :cljs
-     (:require
-       [com.fulcrologic.fulcro.dom :as dom :refer [div label input]]
-       [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
-       [com.fulcrologic.rad.form :as form]
-       [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
-       [com.fulcrologic.rad.control :as control]
-       [com.fulcrologic.rad.form-options :as fo]
-       [com.fulcrologic.rad.report :as report]
-       [com.fulcrologic.rad.report-options :as ro]
-       [com.fulcrologic.rad.picker-options :as po]
-       [clojure.string :as str]
-       [com.example.model-rad.team :as r.team]
-       [com.example.model-rad.city :as r.city]
-       [com.fulcrologic.fulcro.raw.components :as rc]
-       [taoensso.timbre :as log])))
+  (:require
+    #?(:clj  [com.fulcrologic.fulcro.dom-server :as dom :refer [div label input]]
+       :cljs [com.fulcrologic.fulcro.dom :as dom :refer [div label input]])
+    [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
+    [com.fulcrologic.rad.form :as form]
+    [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
+    [com.fulcrologic.rad.control :as control]
+    [com.fulcrologic.rad.form-options :as fo]
+    [com.fulcrologic.rad.report :as report]
+    [com.fulcrologic.rad.report-options :as ro]
+    [com.fulcrologic.rad.picker-options :as po]
+    [clojure.string :as str]
+    [com.example.model-rad.team :as r.team]
+    [com.example.model-rad.city :as r.city]
+    [com.fulcrologic.fulcro.raw.components :as rc]
+    [taoensso.timbre :as log]))
 
 
 
@@ -147,14 +144,7 @@
                                          (comp/transact! this
                                            [(toggle-enable {:team/id id})])))
                             }
-                           #_{
-                              :action (print "Helado")
-                              #_(fn [report-instance {:team/keys [id]}]
-                                  #_#?(:cljs
-                                       (comp/transact! report-instance [(team/set-team-active {:team/id id})])))
-                              ;:visible?  (fn [_ row-props] (:team/active? row-props))
-                              ;:disabled? (fn [_ row-props] (not (:team/active? row-props)))
-                              }]
+]
 
    ro/route               "teams"})
 

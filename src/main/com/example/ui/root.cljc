@@ -11,7 +11,7 @@
     [com.example.ui.team-forms :refer [TeamForm TeamList]]
     [com.example.ui.city-forms :refer [CityForm CityList]]
     [com.example.ui.match-forms :refer [MatchForm MatchList]]
-    [com.example.ui.league-forms :refer [LeagueList]]
+    [com.example.ui.league-forms :refer [LeagueList Tournament]]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
@@ -21,7 +21,6 @@
     [com.fulcrologic.rad.routing :as rroute]
     [com.fulcrologic.fulcro.data-fetch :as df]
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]))
-
 
 (defn load-data [app key target]
   (df/load! app key nil {:target               (conj target key)
@@ -43,10 +42,9 @@
   (dom/div :.ui.grid.bg-gray-400
     (dom/div :.row
       (dom/div :.column
-        (dom/div :.flex.flex-col
-          (dom/div :.ui.container.mt-4
-            (dom/div :.font-inter.text-blue.font-bold.text-center.text-4xl "FULCRO PROFESIONAL COLOMBIANO"))
-          (dom/div :.border.border-black.text-center.bg-white.m-10.py-4.rounded-lg.cursor-pointer
+        (dom/div :.flex.flex-col.gap-4
+          (dom/div :.font-inter.text-blue.font-bold.text-center.text-4xl.mt-2 "FULCRO PROFESIONAL COLOMBIANO")
+          (dom/div :.border.border-black.text-center.bg-white.py-4.my-4.mx-10.rounded-lg.cursor-pointer
             (if all-leagues
               (map (fn [{:league/keys [id year]}]
                      (dom/div :.font-poppins.font-semibold.text-2xl {:key id} (str "Liga Mustang " year)))
@@ -77,7 +75,8 @@
                          TeamList TeamForm
                          CityList CityForm
                          MatchList MatchForm
-                         LeagueList]}
+                         LeagueList Tournament
+                         ]}
   ;; Normal Fulcro code to show a loader on slow route change (assuming Semantic UI here, should
   ;; be generalized for RAD so UI-specific code isn't necessary)
   (dom/div
@@ -100,7 +99,8 @@
          (dom/div {:style {:background "linear-gradient(to right, #FBBF24 0%, #FBBF24 50%, #2563EB 50%, #2563EB 75%, #DC2626 75%, #DC2626 100%)"}}
            (div :.ui.top.menu
              (comp/fragment
-               (dom/div :.ui.item.cursor-pointer {:onClick (fn [] (rroute/route-to! this LandingPage {}))} "FulcroPC")
+               (dom/div :.ui.item.cursor-pointer {:onClick (fn [] (rroute/route-to! this LandingPage {}))} (dom/img {:src   (str "shields/fcf.png")
+                                                                                                                     :class "w-10 h-10 object-contain"}))
                (ui-dropdown {:className "item" :text "Tournament"}
                  (ui-dropdown-menu {}
                    (ui-dropdown-item {:onClick (fn [] (rroute/route-to! this LeagueList {}))} "Tournament")
