@@ -2,13 +2,13 @@
   (:require
     [clojure.tools.namespace.repl :as tools-ns :refer [set-refresh-dirs]]
     [clojure.math.combinatorics :as combo]
-    [com.example.components.database :refer [datomic-connections]]
-    [com.example.components.ring-middleware]
-    [com.example.components.server]
+    [app.fulcropc.server.database :refer [datomic-connections]]
+    [app.fulcropc.server.ring-middleware]
+    [app.fulcropc.server.server]
     [com.fulcrologic.rad.ids :refer [new-uuid]]
     [com.fulcrologic.rad.type-support.date-time :as dt]
-    [com.example.model.team :as team]
-    [com.example.model.match :as match]
+    [app.fulcropc.resolvers.team :as team]
+    [app.fulcropc.resolvers.match :as match]
     [datomic.client.api :as d]
     [mount.core :as mount]
     [taoensso.timbre :as log])

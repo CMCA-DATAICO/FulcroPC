@@ -1,0 +1,63 @@
+(ns app.fulcropc.server.parser
+  (:require
+    [app.fulcropc.server.auto-resolvers :refer [automatic-resolvers]]
+    [app.fulcropc.server.blob-store :as bs]
+    [app.fulcropc.server.config :refer [config]]
+    [app.fulcropc.server.database :refer [datomic-connections]]
+    [app.fulcropc.server.delete-middleware :as delete]
+    [app.fulcropc.server.save-middleware :as save]
+    [app.fulcropc.model.attributes :refer [all-attributes]]
+
+    ;; Require namespaces that define resolvers
+    [app.fulcropc.resolvers.account :as m.account]
+    [app.fulcropc.resolvers.team :as m.team]
+    [app.fulcropc.resolvers.city :as m.city]
+    [app.fulcropc.resolvers.match :as m.match]
+    [app.fulcropc.resolvers.league :as m.league]
+
+    [com.fulcrologic.rad.attributes :as attr]
+    [com.fulcrologic.rad.blob :as blob]
+    [com.fulcrologic.rad.database-adapters.datomic-cloud :as datomic]
+    [com.fulcrologic.rad.form :as form]
+    [com.fulcrologic.rad.pathom :as pathom]
+    [mount.core :refer [defstate]]
+    [com.wsscode.pathom.core :as p]
+    [com.fulcrologic.rad.type-support.date-time :as dt]
+    [com.wsscode.pathom.connect :as pc]))
+
+(pc/defresolver index-explorer [{::pc/keys [indexes]} _]
+  {::pc/input  #{:com.wsscode.pathom.viz.index-explorer/id}
+   ::pc/output [:com.wsscode.pathom.viz.index-explorer/index]}
+  {:com.wsscode.pathom.viz.index-explorer/index
+   (p/transduce-maps
+     (remove (comp #{::pc/resolve ::pc/mutate} key))
+     indexes)})
+
+(def all-resolvers
+  "The list of all hand-written resolvers/mutations."
+  [index-explorer m.account/resolvers
+   m.team/resolvers m.city/resolvers
+   m.match/resolvers m.league/resolvers])
+
+(defstate parser
+  :start
+  (pathom/new-parser config
+    [(attr/pathom-plugin all-attributes)                    ; Other plugins need the list of attributes. This adds it to env.
+     ;; Install form middleware
+     (form/pathom-plugin save/middleware delete/middleware)
+     ;; Select database for schema
+     (datomic/pathom-plugin (fn [env] {:production (:main datomic-connections)}))
+     ;; Enables binary object upload integration with RAD
+     (blob/pathom-plugin bs/temporary-blob-store {:files bs/file-blob-store})
+     {::p/wrap-parser
+      (fn transform-parser-out-plugin-external [parser]
+        (fn transform-parser-out-plugin-internal [env tx]
+          ;; Ensure the time zone is set for all resolvers/mutations
+          (dt/with-timezone "America/Los_Angeles"
+            (if (and (map? env) (seq tx))
+              (parser env tx)
+              {}))))}]
+    [automatic-resolvers
+     all-resolvers
+     form/resolvers
+     (blob/resolvers all-attributes)]))

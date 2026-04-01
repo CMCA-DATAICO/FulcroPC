@@ -8,7 +8,7 @@ release:
 	TIMBRE_LEVEL=:warn npx shadow-cljs release main
 
 server:
-	clj -A:dev -M -m com.example.components.server
+	clj -A:dev -M -m app.fulcropc.server.server
 
 tw:
 	npm run tailwind:build
