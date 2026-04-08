@@ -8,7 +8,7 @@
                [com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown-menu :refer [ui-dropdown-menu]]
                [com.fulcrologic.semantic-ui.modules.dropdown.ui-dropdown-item :refer [ui-dropdown-item]]])
     [app.fulcropc.ui.account-forms :refer [AccountForm AccountList]]
-    [app.fulcropc.ui.team-forms :refer [TeamForm TeamList]]
+    [app.fulcropc.ui.team-forms :refer [TeamForm TeamList TeamProfile]]
     [app.fulcropc.ui.city-forms :refer [CityForm CityList]]
     [app.fulcropc.ui.match-forms :refer [MatchForm MatchList]]
     [app.fulcropc.ui.league-forms :refer [LeagueList Tournament]]
@@ -40,25 +40,24 @@
                         (load-data app :league/all-leagues [:component/id ::LandingPage])
                         (load-data app :team/attributes-teams [:component/id ::LandingPage]))))}
   (dom/div :.ui.grid.bg-gray-400
-    (dom/div :.row
-      (dom/div :.column
-        (dom/div :.flex.flex-col.gap-4
-          (dom/div :.font-inter.text-blue.font-bold.text-center.text-4xl.mt-2 "FULCRO PROFESIONAL COLOMBIANO")
-          (dom/div :.border.border-black.text-center.bg-white.py-4.my-4.mx-10.rounded-lg.cursor-pointer
-            (if all-leagues
-              (map (fn [{:league/keys [id year]}]
-                     (dom/div :.font-poppins.font-semibold.text-2xl {:key id} (str "Liga Mustang " year)))
-                all-leagues)
-              "Loading leagues...")))))
+    (dom/div :.flex.flex-col.flex-1
+      (dom/div :.font-inter.text-blue.font-bold.text-center.text-4xl.my-6 "FULCRO PROFESIONAL COLOMBIANO")
+      (dom/div :.border.border-black.text-center.bg-white.py-4.px-10.mb-8.mx-10.rounded-lg.cursor-pointer
+        (if all-leagues
+          (map (fn [{:league/keys [id year]}]
+                 (dom/div :.font-poppins.font-semibold.text-2xl {:key id} (str "Liga Mustang " year)))
+            all-leagues)
+          "Loading leagues...")))
     (if attributes-teams
       (let [chunks (partition 4 attributes-teams)]          ;; Partition the data into groups of 4
         (map (fn [row]
-               (dom/div :.row.w-full.mx-10 {:key (str "row-" (first row))}
+               (dom/div :.row.mx-10 {:key (str "row-" (first row))}
                  (map (fn [{:team/keys [id title city badge]}]
                         (dom/div :.four.wide.column {:key id}
                           (dom/div :.flex.flex-row.border.p-8.items-center.justify-center.text-center.gap-4.bg-white.cursor-pointer
+                            {:onClick (fn [] (rroute/route-to! this TeamProfile {:team-id (str id)}))}
                             (when badge
-                              (dom/img {:src   (str "shields/" badge)
+                              (dom/img {:src   (str "/shields/" badge)
                                         :alt   title
                                         :class "w-18 h-18 object-contain"}))
                             (dom/div :.flex.flex-col.p-2
@@ -72,7 +71,7 @@
   {:always-render-body? true
    :router-targets      [LandingPage
                          AccountList AccountForm
-                         TeamList TeamForm
+                         TeamList TeamForm TeamProfile
                          CityList CityForm
                          MatchList MatchForm
                          LeagueList Tournament
@@ -96,10 +95,11 @@
   #?(:cljs
      (if ready?
        (let [busy? (seq active-remotes)]
-         (dom/div {:style {:background "linear-gradient(to right, #FBBF24 0%, #FBBF24 50%, #2563EB 50%, #2563EB 75%, #DC2626 75%, #DC2626 100%)"}}
+         (dom/div {:style {:minHeight  "100dvh" :display "flex" :flexDirection "column"
+                           :background "linear-gradient(to right, #FBBF24 0%, #FBBF24 50%, #2563EB 50%, #2563EB 75%, #DC2626 75%, #DC2626 100%)"}}
            (div :.ui.top.menu
              (comp/fragment
-               (dom/div :.ui.item.cursor-pointer {:onClick (fn [] (rroute/route-to! this LandingPage {}))} (dom/img {:src   (str "shields/fcf.png")
+               (dom/div :.ui.item.cursor-pointer {:onClick (fn [] (rroute/route-to! this LandingPage {}))} (dom/img {:src   (str "/shields/fcf.png")
                                                                                                                      :class "w-10 h-10 object-contain"}))
                (ui-dropdown {:className "item" :text "Tournament"}
                  (ui-dropdown-menu {}
@@ -118,7 +118,7 @@
                    (ui-dropdown-item {:onClick (fn [] (form/create! this CityForm))} "New City")
                    ))
                (div :.ui.tiny.loader {:classes [(when busy? "active")]})))
-           (div :.ui.basic.segment
+           (div :.ui.basic.segment.flex-1.flex.flex-col {:style {:overflow "hidden"}}
              (ui-main-router router))))
        (div :.ui.active.dimmer
          (div :.ui.large.text.loader "Loading")))))

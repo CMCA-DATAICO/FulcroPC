@@ -15,6 +15,8 @@
     [app.fulcropc.model.team :as r.team]
     [app.fulcropc.model.city :as r.city]
     [com.fulcrologic.fulcro.raw.components :as rc]
+    [com.fulcrologic.fulcro.data-fetch :as df]
+    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
     [taoensso.timbre :as log]))
 
 
@@ -34,29 +36,29 @@
 
 (form/defsc-form TeamForm
   [this props]
-  {fo/id            r.team/id
-   fo/attributes    [r.team/title
-                     r.team/city]
-   fo/route-prefix  "team"
-   fo/title         "Team Form"})
+  {fo/id           r.team/id
+   fo/attributes   [r.team/title
+                    r.team/city]
+   fo/route-prefix "team"
+   fo/title        "Team Form"})
 
 
 
 #_(form/defsc-form TeamForm [this props]
-  [fo/id r.team/id
-   fo/attributes [r.team/title
-                  r.team/city]
-   fo/route-prefix "team"
-   fo/title "Create Teams"
-   fo/field-styles {:team/city :pick-one}
-   fo/field-options {:team/city {po/query-key       :city/all-cities
-                                 po/query-component (rc/nc [:city/title :city/id])
-                                 po/options-xform   (fn [normalize-response raw-response]
-                                                      (mapv
-                                                        (fn [{:city/keys [id title]}]
-                                                          {:text title :value [:city/id id]})
-                                                        (sort-by :city/title raw-response)
-                                                        ))}}])
+    [fo/id r.team/id
+     fo/attributes [r.team/title
+                    r.team/city]
+     fo/route-prefix "team"
+     fo/title "Create Teams"
+     fo/field-styles {:team/city :pick-one}
+     fo/field-options {:team/city {po/query-key       :city/all-cities
+                                   po/query-component (rc/nc [:city/title :city/id])
+                                   po/options-xform   (fn [normalize-response raw-response]
+                                                        (mapv
+                                                          (fn [{:city/keys [id title]}]
+                                                            {:text title :value [:city/id id]})
+                                                          (sort-by :city/title raw-response)
+                                                          ))}}])
 
 
 ;; NOTE: any form can be used as a subform, but when you do so you must add addl config here
@@ -109,6 +111,7 @@
            (nil? target)
            (empty? target)
            (and nm (str/includes? nm target)))))
+
    ro/run-on-mount?       true
 
    ro/initial-sort-params {:sort-by          :team/title
@@ -144,20 +147,49 @@
                                          (comp/transact! this
                                            [(toggle-enable {:team/id id})])))
                             }
-]
+                           ]
 
    ro/route               "teams"})
 
-#_(div
-    ;(report/render-controls this)
-    (report/render-control this ::new-team)
-    (dom/button :.ui.green.button {:onClick (fn [] (form/create! this teamForm))}
-      "Boo")
-    #_(div :.ui.form
-        (div :.field
-          (dom/label "Filter")
-          (report/render-control this ::filter-title)))
-    #_(dom/div :.ui.list
-        (mapv (fn [row]
-                (ui-team-list-item row))
-          current-rows)))
+
+(defsc TeamProfile [this {:team/keys [id title score attack mid defense city enable? badge palmares]}]
+  {:query         [:team/id :team/title :team/score :team/attack :team/mid :team/defense
+                   :team/enable? :team/badge
+                   {:team/city [:city/id :city/title]}
+                   {:team/palmares [:league/id :league/year]}]
+   :ident         :team/id
+   :initial-state {:team/id nil}
+   :route-segment ["team-profile" :team-id]
+   :will-enter    (fn [app {:keys [team-id]}]
+                    (let [team-id (uuid team-id)]
+                      (df/load! app [:team/id team-id] TeamProfile)
+                      (dr/route-immediate [:team/id team-id])))}
+  (dom/div :.ui.segment
+    (dom/div :.flex.flex-row.items-center.gap-4.mb-6
+      (if badge
+        (dom/img {:src   (str "/shields/" badge)
+                  :alt   title
+                  :class "w-24 h-24 object-contain"})
+        (dom/div "Imagen"))
+      (dom/div
+        (dom/h2 :.font-poppins.font-bold.text-3xl title)
+        (dom/p :.text-lg (str (:city/title city)))))
+    (dom/div :.ui.three.statistics
+      (dom/div :.statistic
+        (dom/div :.value (str attack))
+        (dom/div :.label "Attack"))
+      (dom/div :.statistic
+        (dom/div :.value (str mid))
+        (dom/div :.label "Midfield"))
+      (dom/div :.statistic
+        (dom/div :.value (str defense))
+        (dom/div :.label "Defense")))
+    (dom/div :.mt-6
+      (dom/h3 :.font-bold.text-xl "Score: " (str score))
+      (when (seq palmares)
+        (dom/div :.mt-4
+          (dom/h4 :.font-bold "Palmares")
+          (dom/ul
+            (map (fn [{:league/keys [id year]}]
+                   (dom/li {:key (str id)} (str "Liga " year)))
+              palmares)))))))

@@ -81,6 +81,8 @@
 }
 
 @theme {
+    --spacing: 0.25rem;
+
     --font-open-sans: Open Sans, sans-serif;
     --font-poppins: Poppins, sans-serif;
     --font-inter: Inter, sans-serif;

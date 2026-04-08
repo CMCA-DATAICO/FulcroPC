@@ -12,7 +12,7 @@
 #?(:clj
    (defn get-all-teams
      [env query-params]
-     (log/debug (some-> (get-in env [do/databases :production]) deref))
+     ;; (log/debug (some-> (get-in env [do/databases :production]) deref))
      (if-let [db (some-> (get-in env [do/databases :production]) deref)]
        (let [ids (map first
                    (d/q [:find '?uuid
@@ -20,6 +20,18 @@
                          ['?e :team/id '?uuid]] db))]
          (mapv (fn [id] {:team/id id}) ids))
        (log/error "No database atom for production schema!"))))
+
+#?(:clj
+   (defn get-all-info-team
+     [env query-params]
+     ;; (log/debug (some-> (get-in env [do/databases :production]) deref))
+     (if-let [db (some-> (get-in env [do/databases :production]) deref)]
+       (let [ids (d/q [:find '?uuid
+                       :where
+                       ['?e :team/id '?uuid]] db)]
+         (mapv (fn [id] {:team/id id}) ids))
+       (log/error "No database atom for production schema!"))
+     ))
 
 #?(:clj
    (defresolver all-teams-resolver [env params]

@@ -35,7 +35,7 @@
    fo/default-value (rand-int 100)
    ao/schema        :production})
 
-(defattr defence :team/defence :long
+(defattr defense :team/defense :long
   {ao/identities    #{:team/id}
    ao/cardinality   :one
    fo/default-value (rand-int 100)
@@ -66,4 +66,4 @@
    ao/cardinality :one
    ao/schema      :production})
 
-(def attributes [id title score attack mid defence city enable? palmares badge])
+(def attributes [id title score attack mid defense city enable? palmares badge])

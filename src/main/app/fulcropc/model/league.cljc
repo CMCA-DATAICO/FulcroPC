@@ -36,7 +36,7 @@
                                   :team/score
                                   :team/attack
                                   :team/mid
-                                  :team/defence
+                                  :team/defense
                                   :team/city [:city/id :city/title]
                                   :team/enable?
                                   :team/palmares]}})

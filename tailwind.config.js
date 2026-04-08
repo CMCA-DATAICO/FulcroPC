@@ -59,6 +59,12 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    // Margin and padding for even numbers up to 20
+    ...['m', 'mx', 'my', 'mt', 'mr', 'mb', 'ml', 'p', 'px', 'py', 'pt', 'pr', 'pb', 'pl'].flatMap(prefix =>
+      [2, 4, 6, 8, 10, 12, 14, 16, 18, 20].map(n => `${prefix}-${n}`)
+    ),
+  ],
   theme: {
     extend: {
       fontFamily: {
