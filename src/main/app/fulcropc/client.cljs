@@ -1,7 +1,8 @@
 (ns app.fulcropc.client
   (:require
     [app.fulcropc.application :refer [SPA]]
-    [app.fulcropc.ui.root :refer [LandingPage Root]]
+    [app.fulcropc.ui.root :refer [Root]]
+    [app.fulcropc.ui.landing-page :refer [LandingPage]]
     [com.fulcrologic.fulcro.algorithms.timbre-support :refer [console-appender prefix-output-fn]]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.components :as comp]

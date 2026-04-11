@@ -17,6 +17,7 @@
     [com.fulcrologic.fulcro.raw.components :as rc]
     [com.fulcrologic.fulcro.data-fetch :as df]
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
+    [com.fulcrologic.rad.routing :as rroute]
     [taoensso.timbre :as log]))
 
 
@@ -36,11 +37,19 @@
 
 (form/defsc-form TeamForm
   [this props]
-  {fo/id           r.team/id
-   fo/attributes   [r.team/title
-                    r.team/city]
-   fo/route-prefix "team"
-   fo/title        "Team Form"})
+  {fo/id            r.team/id
+   fo/attributes    [r.team/title
+                     r.team/city]
+   fo/route-prefix  "team"
+   fo/title         "Team Form"
+   fo/field-styles  {:team/city :pick-one}
+   fo/field-options {:team/city {po/query-key       :city/all-cities
+                                 po/query-component (rc/nc [:city/title :city/id])
+                                 po/options-xform   (fn [_ raw-response]
+                                                      (mapv
+                                                        (fn [{:city/keys [id title]}]
+                                                          {:text title :value [:city/id id]})
+                                                        (sort-by :city/title raw-response)))}}})
 
 
 
@@ -161,35 +170,51 @@
    :initial-state {:team/id nil}
    :route-segment ["team-profile" :team-id]
    :will-enter    (fn [app {:keys [team-id]}]
-                    (let [team-id (uuid team-id)]
-                      (df/load! app [:team/id team-id] TeamProfile)
-                      (dr/route-immediate [:team/id team-id])))}
-  (dom/div :.ui.segment
-    (dom/div :.flex.flex-row.items-center.gap-4.mb-6
-      (if badge
-        (dom/img {:src   (str "/shields/" badge)
-                  :alt   title
-                  :class "w-24 h-24 object-contain"})
-        (dom/div "Imagen"))
+                    (let [team-id (uuid team-id)
+                          ident   [:team/id team-id]]
+                      (dr/route-deferred ident
+                        (fn []
+                          (df/load! app ident TeamProfile
+                            {:post-mutation        `dr/target-ready
+                             :post-mutation-params {:target ident}})))))}
+  (dom/div :.flex.flex-col.px-4
+    (dom/div :.flex.flex-row.justify-between
       (dom/div
-        (dom/h2 :.font-poppins.font-bold.text-3xl title)
-        (dom/p :.text-lg (str (:city/title city)))))
-    (dom/div :.ui.three.statistics
-      (dom/div :.statistic
-        (dom/div :.value (str attack))
-        (dom/div :.label "Attack"))
-      (dom/div :.statistic
-        (dom/div :.value (str mid))
-        (dom/div :.label "Midfield"))
-      (dom/div :.statistic
-        (dom/div :.value (str defense))
-        (dom/div :.label "Defense")))
-    (dom/div :.mt-6
-      (dom/h3 :.font-bold.text-xl "Score: " (str score))
-      (when (seq palmares)
-        (dom/div :.mt-4
-          (dom/h4 :.font-bold "Palmares")
-          (dom/ul
-            (map (fn [{:league/keys [id year]}]
-                   (dom/li {:key (str id)} (str "Liga " year)))
-              palmares)))))))
+        (dom/button :.p-4.px-10.bg-white.rounded-lg {:onClick (fn [] (rroute/route-to! this (comp/registry-key->class "app.fulcropc.ui.landing-page/LandingPage") {}))}
+          (str " <--- REGRESAR ")))
+      (dom/div
+        (dom/button :.p-4.px-10.bg-white.rounded-lg {:onClick (fn [] (form/edit! this TeamForm id))}
+          (str " EDITAR "))))
+    (dom/div :.ui.segment
+      (dom/div :.flex.flex-row.p-8.items-center.justify-between.gap-4.bg-white
+        (dom/div :.flex.flex-row.items-center.gap-4.mb-6
+          (if badge
+            (dom/img {:src   (str "/shields/" badge)
+                      :alt   title
+                      :class "w-24 h-24 object-contain"})
+            (dom/div "Imagen"))
+          (dom/div :.items-left
+            (dom/h2 :.font-poppins.font-bold.text-3xl title)
+            (dom/p :.text-lg (str (:city/title city)))))
+        (dom/div :.mt-10
+          (dom/p :.font-bold.text-3xl "Score: " (str score))
+          (when (seq palmares)
+            (dom/div :.mt-4
+              (dom/h4 :.font-bold "Palmares")
+              (dom/ul
+                (map (fn [{:league/keys [id year]}]
+                       (dom/li {:key (str id)} (str "Liga " year)))
+                  palmares))))))
+      (dom/div :.p-2.my-10
+        (dom/div :.ui.segment
+          (dom/div :.ui.three.statistics
+            (dom/div :.statistic
+              (dom/div :.value (str attack))
+              (dom/div :.label "Attack"))
+            (dom/div :.statistic
+              (dom/div :.value (str mid))
+              (dom/div :.label "Midfield"))
+            (dom/div :.statistic
+              (dom/div :.value (str defense))
+              (dom/div :.label "Defense")))))
+      (dom/div :.flex.flex-col.p-2.items-end (dom/p "SAM.")))))
